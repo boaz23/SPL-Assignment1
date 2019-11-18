@@ -31,6 +31,9 @@
 *.out
 *.app
 
+# Build Files
+cmake-build-debug/
+bin/
+
 # Specific files
 .idea/workspace.xml
-cmake-build-debug/
