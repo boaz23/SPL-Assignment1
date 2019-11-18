@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# Specific files
+.idea/workspace.xml
+cmake-build-debug/

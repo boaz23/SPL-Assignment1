@@ -14,7 +14,7 @@ bin/Main.o: src/Main.cpp
 	$(CC) $(CFLAGS) -c -Iinclude -o bin/Main.o src/Main.cpp
 
 # Depends on the source and header files 
-bin/run.o: src/run.cpp  include/helloWorld.h
+bin/include/json.o: src/run.cpp  include/helloWorld.h
 	$(CC) $(CFLAGS) -c -Iinclude -o bin/run.o src/run.cpp
 
 #Clean the build directory
