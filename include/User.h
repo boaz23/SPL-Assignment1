@@ -14,6 +14,9 @@ public:
     virtual Watchable* getRecommendation(Session& s) = 0;
     std::string getName() const;
     std::vector<Watchable*> get_history() const;
+    static User* createUser(const std::string &name, const std::string &recommendationAlgorithm);
+    User* createCopy() const;
+    void addToHistory(Watchable *watchable);
 protected:
     std::vector<Watchable*> history;
 private:
@@ -34,6 +37,7 @@ public:
     RerunRecommenderUser(const std::string& name);
     virtual Watchable* getRecommendation(Session& s);
 private:
+    int historyIndex;
 };
 
 class GenreRecommenderUser : public User {
