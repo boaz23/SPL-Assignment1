@@ -17,6 +17,8 @@ public:
 	ActionStatus getStatus() const;
 	virtual void act(Session& sess)=0;
 	virtual std::string toString() const=0;
+    void setArgs(const std::vector<const std::string> &args);
+    std::vector<const std::string>& getArgs();
 protected:
 	void complete();
 	void error(const std::string& errorMsg);
@@ -24,6 +26,7 @@ protected:
 private:
 	std::string errorMsg;
 	ActionStatus status;
+	std::vector<const std::string>& args;
 };
 
 class CreateUser  : public BaseAction {
