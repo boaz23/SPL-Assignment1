@@ -2,6 +2,7 @@
 #define ACTION_H_
 
 #include <string>
+#include <vector>
 #include <iostream>
 
 class Session;
@@ -17,6 +18,8 @@ public:
 	ActionStatus getStatus() const;
 	virtual void act(Session& sess)=0;
 	virtual std::string toString() const=0;
+    void setArgs(std::vector<const std::string> &args);
+    std::vector<const std::string>& getArgs();
 protected:
 	void complete();
 	void error(const std::string& errorMsg);
@@ -24,6 +27,7 @@ protected:
 private:
 	std::string errorMsg;
 	ActionStatus status;
+    std::vector<const std::string>* args;
 };
 
 class CreateUser  : public BaseAction {
