@@ -27,11 +27,7 @@ protected:
 private:
 	std::string errorMsg;
 	ActionStatus status;
-<<<<<<< HEAD
     std::vector<const std::string>* args;
-=======
-	std::vector<const std::string>* args;
->>>>>>> master
 };
 
 class CreateUser  : public BaseAction {
