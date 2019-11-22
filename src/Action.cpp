@@ -48,7 +48,7 @@ void CreateUser::act(Session &sess) {
 
     const std::vector<std::string>& vArgs = getArgs();
 
-    if(vArgs.size() < 2){
+    if(vArgs.size() != 2){
         error("Usage: createuser<user_name> <recommendation_algorithm>");
     } else {
         if(sess.getUser(vArgs[0]) == nullptr){
@@ -72,6 +72,99 @@ std::string CreateUser::toString() const {
         return "CreateUser" + std::to_string(getStatus());
     } else {
         return  "CreateUser" + getErrorMsg();
+    }
+}
+//endregion
+
+//region ChangeActiveUser
+/* Action that changes the active user if it exist.
+*/
+void ChangeActiveUser::act(Session &sess) {
+
+    const std::vector<std::string>& vArgs = getArgs();
+
+    if(vArgs.size() != 1){
+        error("changeuser <user_name>");
+    } else {
+        if(sess.changeActiveUser(sess.getUser(vArgs[0]))){
+            complete();
+
+        } else {
+            error("the user name doesnt exists");
+        }
+    }
+}
+
+/* Return a string representation of the action*/
+std::string ChangeActiveUser::toString() const {
+    if(getStatus() != ERROR){
+        return "ChangeActiveUser" + std::to_string(getStatus());
+    } else {
+        return  "ChangeActiveUser" + getErrorMsg();
+    }
+}
+//endregion
+
+//region DeleteUser
+/* Action that deletes the active user if it exist. */
+void DeleteUser::act(Session &sess) {
+
+    const std::vector<std::string>& vArgs = getArgs();
+
+    if(vArgs.size() != 1){
+        error("deleteuser <user_name>");
+    } else {
+        // TODO check if the active user is equal to the given one
+        if(sess.removeUser(sess.getUser(vArgs[0]))){
+            complete();
+
+        } else {
+            error("the user name doesnt exists");
+        }
+    }
+}
+
+/* Return a string representation of the action*/
+std::string DeleteUser::toString() const {
+    if(getStatus() != ERROR){
+        return "DeleteUser" + std::to_string(getStatus());
+    } else {
+        return  "DeleteUser" + getErrorMsg();
+    }
+}
+//endregion
+
+//region DuplicateUser
+/* Action that duplicates a user, with all of its data,
+ * except the username. */
+void DuplicateUser::act(Session &sess) {
+
+    const std::vector<std::string>& vArgs = getArgs();
+
+    if(vArgs.size() != 2){
+        error("Usage: dupuser <original_user_name> <new_user_name>");
+    } else {
+        User* toDuplicate = sess.getUser(vArgs[0]);
+        if(toDuplicate != nullptr){
+                if(sess.getUser(vArgs[1]) == nullptr) {
+                    User* duplicatedUser = toDuplicate->createCopy(vArgs[1]);
+                    sess.addUser(duplicatedUser);
+                    complete();
+                } else {
+                    error("the duplicated user name is already taken");
+                }
+        } else {
+            error("the original user name isn't exist");
+        }
+    }
+}
+
+/* Return a string representation of the action*/
+std::string DuplicateUser::toString() const {
+    if(getStatus() != ERROR){
+        return "DuplicateUser" + std::to_string(getStatus());
+    } else {
+        return  "DuplicateUser" + getErrorMsg();
     }
 }
 //endregion

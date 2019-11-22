@@ -15,7 +15,7 @@ public:
     std::string getName() const;
     std::vector<Watchable*> get_history() const;
     static User* createUser(const std::string &name, const std::string &recommendationAlgorithm);
-    User* createCopy() const;
+    User* createCopy(const std::string name) const;
     void addToHistory(Watchable *watchable);
 protected:
     std::vector<Watchable*> history;
