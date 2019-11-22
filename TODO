@@ -1,5 +1,5 @@
-In DeleteUser class, act function, before deleting the user check if the 
-is equal to the active one,set an error or delete it and set to defult user.
+In Watch action check the function std::stio for numbers < 0,
+complete the class.
 
 # code improvment
 Create a var to hold the name of the Action for the to string method.
@@ -7,7 +7,3 @@ Public static function that will return the command code.
 Static method in User to check if a recommandtion code is valid,
 	to improve the proccess of creating user.
 
-# draw io
-Update the draw io in the master line that was updated:
-	In User User* createCopy() const to
-		User* createCopy(const string& name) const

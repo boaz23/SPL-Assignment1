@@ -5,7 +5,9 @@
 #include <vector>
 #include <iostream>
 
+
 class Session;
+class User;
 
 enum ActionStatus{
 	PENDING, COMPLETED, ERROR
@@ -72,6 +74,8 @@ class Watch : public BaseAction {
 public:
 	virtual void act(Session& sess);
 	virtual std::string toString() const;
+private:
+    virtual void watchRecomandtion(Session &sess, User *activeUser);
 };
 
 
