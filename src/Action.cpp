@@ -1,5 +1,8 @@
 #include "../include/Action.h"
+#include "../include/User.h"
+#include "../include/Session.h"
 
+//region BaseAction
 /* Basic constructor of the class */
 BaseAction::BaseAction() : errorMsg(""), status(PENDING), args(nullptr){}
 
@@ -26,11 +29,49 @@ std::string BaseAction::getErrorMsg() const {
 }
 
 /* Copy the args to the vArgs of the class. */
-void BaseAction::setArgs(std::vector<const std::string> &args){
+void BaseAction::setArgs(std::vector<std::string> &args){
     this->args = &args;
 }
 
 /* Return a reference to the current args */
-std::vector<const std::string>& BaseAction::getArgs() {
+const std::vector<std::string>& BaseAction::getArgs() {
     return *args;
 }
+//endregion
+
+//region CreateUser
+/* Action that creates new user if this two condition are valid
+ * 1. The given user name isn't exist.
+ * 2. The recommendation code is valid.
+*/
+void CreateUser::act(Session &sess) {
+
+    const std::vector<std::string>& vArgs = getArgs();
+
+    if(vArgs.size() < 2){
+        error("Usage: createuser<user_name> <recommendation_algorithm>");
+    } else {
+        if(sess.getUser(vArgs[0]) == nullptr){
+            User* newUser = User::createUser(vArgs[0], vArgs[1]);
+            // The recommendation algorithem name is not valid
+            if(newUser == nullptr){
+                error("recommendation algorithm code is not valid");
+            } else {
+                sess.addUser(newUser);
+                complete();
+            }
+        } else {
+            error("the new user name is already taken");
+        }
+    }
+}
+
+/* Return a string representation of the action*/
+std::string CreateUser::toString() const {
+    if(getStatus() != ERROR){
+        return "CreateUser" + std::to_string(getStatus());
+    } else {
+        return  "CreateUser" + getErrorMsg();
+    }
+}
+//endregion
