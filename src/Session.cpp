@@ -56,10 +56,10 @@ Session::~Session() {
     clean();
 }
 
-Session::Session(const Session &other) {
+Session::Session(const Session &other) : content(), actionsLog(), userMap(), activeUser(nullptr), exitFlag(false) {
     copy(other);
 }
-Session::Session(Session &&rval) {
+Session::Session(Session &&rval) : content(), actionsLog(), userMap(), activeUser(nullptr), exitFlag(false) {
     steal(rval);
 }
 Session& Session::operator=(const Session &other) {
@@ -96,11 +96,11 @@ Session::Session(const string &configFilePath) : content(), actionsLog(), userMa
         tvSerieses.push_back(srsReader.readSeries(i));
     }
 
-    for (int i = 0; i < tvSerieses.size(); ++i) {
+    for (size_t i = 0; i < tvSerieses.size(); ++i) {
         TvSeries& tvSeries = *tvSerieses[i];
         vector<int> seasons = tvSeries.getSeasons();
         Episode* lastEpisode = nullptr;
-        for (int season = 0; season < seasons.size(); ++season) {
+        for (size_t season = 0; season < seasons.size(); ++season) {
             int episodeCount = seasons[i];
             for (int iEpisode = 0; iEpisode < episodeCount; ++iEpisode) {
                 Episode* pEpisode = new Episode(
@@ -158,6 +158,7 @@ bool Session::changeActiveUser(User *user) {
     }
 
     activeUser = user;
+    return true;
 }
 bool Session::removeUser(User *user) {
     if (user == nullptr) {
@@ -165,6 +166,7 @@ bool Session::removeUser(User *user) {
     }
 
     userMap.erase(user->getName());
+    return true;
 }
 
 void Session::raiseExistFlag() {

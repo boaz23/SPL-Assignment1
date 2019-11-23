@@ -14,8 +14,8 @@ Movie* ConfigMovieReader::readMovie(int i, long id) {
     json jMovie = _moviesSection.at(i);
     vector<string> tags;
     json jTags = jMovie.at("tags");
-    for (int j = 0; j < jTags.size(); ++j) {
-        tags.push_back(jTags.at(j));
+    for (auto &jTag : jTags) {
+        tags.push_back(jTag);
     }
     return new Movie(id, jMovie.at("name"), jMovie.at("length"), tags);
 }

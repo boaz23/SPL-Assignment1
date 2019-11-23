@@ -16,14 +16,14 @@ unique_ptr<TvSeries> ConfigSeriesReader::readSeries(int i) {
     json jSeries = _seriesSection[i];
     vector<string> tags;
     json jTags = jSeries["tags"];
-    for (int j = 0; j < jTags.size(); ++j) {
-        tags.push_back(jTags[j]);
+    for (auto &jTag : jTags) {
+        tags.push_back(jTag);
     }
 
     vector<int> seasons;
     json jSeasons = jSeries["seasons"];
-    for (int j = 0; j < jSeasons.size(); ++j) {
-        seasons.push_back(jSeasons[j]);
+    for (auto &jSeason : jSeasons) {
+        seasons.push_back(jSeason);
     }
 
     return unique_ptr<TvSeries>(new TvSeries(jSeries["name"], jSeries["episode_length"], seasons, tags));
