@@ -11,6 +11,7 @@ class Session;
 class User{
 public:
     User(const std::string& name);
+    virtual ~User();
     virtual Watchable* getRecommendation(Session& s) = 0;
     std::string getName() const;
     std::vector<Watchable*> get_history() const;

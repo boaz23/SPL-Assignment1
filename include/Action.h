@@ -15,10 +15,11 @@ enum ActionStatus{
 class BaseAction{
 public:
 	BaseAction();
+	virtual ~BaseAction();
 	ActionStatus getStatus() const;
 	virtual void act(Session& sess)=0;
 	virtual std::string toString() const=0;
-    void setArgs(std::vector<std::string> &args);
+    void setArgs(const std::vector<std::string> &args);
     const std::vector<std::string>& getArgs();
     virtual BaseAction* clone() const = 0;
 protected:
@@ -28,7 +29,7 @@ protected:
 private:
 	std::string errorMsg;
 	ActionStatus status;
-    std::vector<std::string>* args;
+    std::vector<std::string> args;
 };
 
 class CreateUser  : public BaseAction {
