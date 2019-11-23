@@ -3,4 +3,4 @@ project(ass1)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(ass1 src/Main.cpp)
+add_executable(ass1 src/Main.cpp src/Action.cpp)
