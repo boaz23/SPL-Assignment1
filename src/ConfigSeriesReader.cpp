@@ -4,6 +4,7 @@
 using nlohmann::json;
 using std::string;
 using std::vector;
+using std::unique_ptr;
 
 ConfigSeriesReader::ConfigSeriesReader(const nlohmann::json &seriesSection) : _seriesSection(seriesSection) {}
 
@@ -11,7 +12,7 @@ int ConfigSeriesReader::getSeriesCount() {
     return _seriesSection.size();
 }
 
-TvSeries* ConfigSeriesReader::readSeries(int i) {
+unique_ptr<TvSeries> ConfigSeriesReader::readSeries(int i) {
     json jSeries = _seriesSection[i];
     vector<string> tags;
     json jTags = jSeries["tags"];
@@ -25,5 +26,5 @@ TvSeries* ConfigSeriesReader::readSeries(int i) {
         seasons.push_back(jSeasons[j]);
     }
 
-    return new TvSeries(jSeries["name"], jSeries["episode_length"], seasons, tags);
+    return unique_ptr<TvSeries>(new TvSeries(jSeries["name"], jSeries["episode_length"], seasons, tags));
 }

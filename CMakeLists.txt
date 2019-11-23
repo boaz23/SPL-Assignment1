@@ -3,4 +3,4 @@ project(ass1)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(ass1 src/Main.cpp src/Action.cpp src/test.cpp src/ConfigMovieReader.cpp src/ConfigSeriesReader.cpp include/ConfigSeriesReader.h src/TvSeries.cpp include/TvSeries.h)
+add_executable(ass1 src/Main.cpp src/Action.cpp src/test.cpp src/ConfigMovieReader.cpp src/ConfigSeriesReader.cpp src/TvSeries.cpp src/Session.cpp)

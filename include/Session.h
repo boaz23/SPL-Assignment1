@@ -22,11 +22,20 @@ public:
     bool changeActiveUser(User *user);
     bool removeUser(User *user);
     void raiseExistFlag();
+
+    Session(const Session &other);
+    Session(Session &&rval);
+    Session& operator=(const Session &other);
+    Session& operator=(Session &&rval);
 private:
     std::vector<Watchable*> content;
     std::vector<BaseAction*> actionsLog;
     std::unordered_map<std::string,User*> userMap;
     User* activeUser;
     bool exitFlag;
+
+    void clean();
+    void steal(Session &other);
+    void copy(const Session &other);
 };
 #endif

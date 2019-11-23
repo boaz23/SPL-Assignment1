@@ -9,7 +9,7 @@ class ConfigSeriesReader {
 public:
     ConfigSeriesReader(const nlohmann::json& seriesSection);
     int getSeriesCount();
-    TvSeries* readSeries(int i);
+    std::unique_ptr<TvSeries> readSeries(int i);
 
 private:
     const nlohmann::json& _seriesSection;
