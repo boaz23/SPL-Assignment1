@@ -108,10 +108,9 @@ Session::Session(const string &configFilePath) : content(), actionsLog(), userMa
 void Session::start() {
     cout << "SPLFLIX is now on!" << endl;
     if (userMap.count(DEFAULT_USER_NAME) == 0) {
-        // TODO: remove comments when testing with working code
-//        User* pUser = new LengthRecommenderUser(DEFAULT_USER_NAME);
-//        userMap[pUser->getName()] = pUser;
-//        activeUser = pUser;
+        User* pUser = new LengthRecommenderUser(DEFAULT_USER_NAME);
+        userMap[pUser->getName()] = pUser;
+        activeUser = pUser;
     }
 
     exitFlag = false;
@@ -133,9 +132,8 @@ void Session::start() {
         words.erase(words.begin());
         BaseAction* action = actionsFactory[actionCmd]->createAction();
         actionsLog.push_back(action);
-        // TODO: remove comments when testing with working code
-//        action->setArgs(words);
-//        action->act(*this);
+        action->setArgs(words);
+        action->act(*this);
     }
     exitFlag = false;
 }
