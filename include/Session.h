@@ -19,7 +19,7 @@ public:
     Watchable* getContentById(long id);
     void addToActionLog(BaseAction &action);
     User* getActiveUser() const;
-    User* getUser(const std::string &name) const;
+    User* getUser(const std::string &name);
     bool addUser(User &user);
     bool changeActiveUser(User &user);
     bool removeUser(User &user);
