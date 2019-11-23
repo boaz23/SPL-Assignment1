@@ -79,7 +79,6 @@ Session& Session::operator=(Session &&rval) {
 
 Session::Session(const string &configFilePath) : content(), actionsLog(), userMap(), activeUser(nullptr), exitFlag(false) {
     long watchableId = -1;
-    vector<Watchable*> content;
 
     ifstream ifsCfg(configFilePath);
     json jsonCfg;
@@ -101,7 +100,7 @@ Session::Session(const string &configFilePath) : content(), actionsLog(), userMa
         vector<int> seasons = tvSeries.getSeasons();
         Episode* lastEpisode = nullptr;
         for (size_t season = 0; season < seasons.size(); ++season) {
-            int episodeCount = seasons[i];
+            int episodeCount = seasons[season];
             for (int iEpisode = 0; iEpisode < episodeCount; ++iEpisode) {
                 Episode* pEpisode = new Episode(
                         ++watchableId,
@@ -140,32 +139,20 @@ User* Session::getActiveUser() const {
 User* Session::getUser(const string &name) {
     return userMap[name];
 }
-bool Session::addUser(User *user) {
-    if (user == nullptr) {
-        throw "User cannot be null.";
-    }
-
-    if (userMap.count(user->getName()) > 0) {
+bool Session::addUser(User &user) {
+    if (userMap.count(user.getName()) > 0) {
         return false;
     }
 
-    userMap[user->getName()] = user;
+    userMap[user.getName()] = &user;
     return true;
 }
-bool Session::changeActiveUser(User *user) {
-    if (user == nullptr) {
-        throw "User cannot be null.";
-    }
-
-    activeUser = user;
+bool Session::changeActiveUser(User &user) {
+    activeUser = &user;
     return true;
 }
-bool Session::removeUser(User *user) {
-    if (user == nullptr) {
-        throw "User cannot be null.";
-    }
-
-    userMap.erase(user->getName());
+bool Session::removeUser(User &user) {
+    userMap.erase(user.getName());
     return true;
 }
 
