@@ -1,5 +1,6 @@
 #include "../include/Watchable.h"
 #include "../include/User.h"
+#include "../include/Session.h"
 
 using namespace std;
 
