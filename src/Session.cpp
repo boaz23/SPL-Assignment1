@@ -2,6 +2,7 @@
 #include "../include/Session.h"
 #include "../include/ConfigMovieReader.h"
 #include "../include/ConfigSeriesReader.h"
+#include "../include/User.h"
 
 using namespace std;
 using json = nlohmann::json;
@@ -25,13 +26,27 @@ void Session::steal(Session &other) {
     userMap = move(other.userMap);
     activeUser = other.activeUser;
     other.activeUser = nullptr;
+    exitFlag = other.exitFlag;
 }
 
 void Session::copy(const Session &other) {
-    for (int i = 0; i < other.content.size(); ++i) {
-        Watchable& watchable = *other.content[i];
-        content.push_back(other.content[i]);
+    content = vector<Watchable*>();
+    for (auto pWatchable : other.content) {
+        content.push_back(pWatchable->clone());
     }
+
+    actionsLog = vector<BaseAction*>();
+    for (auto pAction : other.actionsLog) {
+        actionsLog.push_back(pAction->clone());
+    }
+
+    userMap = unordered_map<string, User*>();
+    for (const auto& user : other.userMap) {
+        userMap[user.first] = user.second->clone();
+    }
+
+    activeUser = userMap[other.activeUser->getName()];
+    exitFlag = other.exitFlag;
 }
 
 Session::~Session() {
@@ -59,7 +74,7 @@ Session& Session::operator=(Session &&rval) {
     return *this;
 }
 
-Session::Session(const string &configFilePath) {
+Session::Session(const string &configFilePath) : content(), actionsLog(), userMap(), activeUser(nullptr), exitFlag(false) {
     long watchableId = 0;
     vector<Watchable*> content;
 

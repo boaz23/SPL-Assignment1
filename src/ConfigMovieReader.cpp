@@ -17,6 +17,5 @@ Movie* ConfigMovieReader::readMovie(int i, long id) {
     for (int j = 0; j < jTags.size(); ++j) {
         tags.push_back(jTags.at(j));
     }
-//    return new Movie(id, jMovie.at("name"), jMovie.at("length"), tags);
-    return nullptr;
+    return new Movie(id, jMovie.at("name"), jMovie.at("length"), tags);
 }
