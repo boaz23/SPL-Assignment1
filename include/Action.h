@@ -83,7 +83,7 @@ public:
 	virtual void act(Session& sess);
 	virtual std::string toString() const;
 private:
-    virtual void watchRecomandtion(Session &sess, User *activeUser);
+    virtual void watchRecommendation(Session &sess, User &activeUser);
     virtual BaseAction* clone() const;
 };
 

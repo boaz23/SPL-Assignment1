@@ -7,7 +7,7 @@
 
 //region BaseAction
 /* Basic constructor of the class */
-BaseAction::BaseAction() : errorMsg(""), status(PENDING), args(nullptr){}
+BaseAction::BaseAction() : errorMsg(""), status(PENDING), args(){}
 
 /* Return the status of the action */
 ActionStatus BaseAction::getStatus() const {
@@ -32,14 +32,16 @@ std::string BaseAction::getErrorMsg() const {
 }
 
 /* Copy the args to the vArgs of the class. */
-void BaseAction::setArgs(std::vector<std::string> &args){
-    this->args = &args;
+void BaseAction::setArgs( const std::vector<std::string> &args){
+    this->args = args;
 }
 
 /* Return a reference to the current args */
 const std::vector<std::string>& BaseAction::getArgs() {
-    return *args;
+    return args;
 }
+
+BaseAction::~BaseAction() = default;
 //endregion
 
 //region CreateUser
@@ -55,12 +57,12 @@ void CreateUser::act(Session &sess) {
         error("Usage: createuser<user_name> <recommendation_algorithm>");
     } else {
         if(sess.getUser(vArgs[0]) == nullptr){
-            User* newUser = User::createUser(vArgs[0], vArgs[1]);
+            User *newUser = User::createUser(vArgs[0], vArgs[1]);
             // The recommendation algorithem name is not valid
             if(newUser == nullptr){
                 error("recommendation algorithm code is not valid");
             } else {
-                sess.addUser(newUser);
+                sess.addUser(*newUser);
                 complete();
             }
         } else {
@@ -89,7 +91,7 @@ void ChangeActiveUser::act(Session &sess) {
     if(vArgs.size() != 1){
         error("changeuser <user_name>");
     } else {
-        if(sess.changeActiveUser(sess.getUser(vArgs[0]))){
+        if(sess.changeActiveUser(*sess.getUser(vArgs[0]))){
             complete();
 
         } else {
@@ -117,8 +119,7 @@ void DeleteUser::act(Session &sess) {
     if(vArgs.size() != 1){
         error("deleteuser <user_name>");
     } else {
-        // TODO check if the active user is equal to the given one
-        if(sess.removeUser(sess.getUser(vArgs[0]))){
+        if(sess.removeUser(*sess.getUser(vArgs[0]))){
             complete();
 
         } else {
@@ -151,7 +152,7 @@ void DuplicateUser::act(Session &sess) {
         if(toDuplicate != nullptr){
                 if(sess.getUser(vArgs[1]) == nullptr) {
                     User* duplicatedUser = toDuplicate->createCopy(vArgs[1]);
-                    sess.addUser(duplicatedUser);
+                    sess.addUser(*duplicatedUser);
                     complete();
                 } else {
                     error("the duplicated user name is already taken");
@@ -256,7 +257,7 @@ void Watch::act(Session &sess) {
     if(vArgs.size() != 1) {
         error("Usage: watch<content_id>");
     } else {
-        User *activeUser = sess.getActiveUser();
+        User &activeUser = *(sess.getActiveUser());
         std::vector<Watchable *> content = sess.getContent();
 
         std::string::size_type sz;
@@ -269,10 +270,11 @@ void Watch::act(Session &sess) {
 
         if(cotentId > 0 & cotentId <= content.size()){
             std::cout << "Watching " << content[cotentId]->toString() << "\n";
-            activeUser->addToHistory(content[cotentId]);
+            activeUser.addToHistory(content[cotentId]);
             complete();
-        }
 
+            watchRecommendation(sess, activeUser);
+        }
     }
 }
 
@@ -285,21 +287,78 @@ std::string Watch::toString() const {
     }
 }
 
-void Watch::watchRecomandtion(Session &sess, User *activeUser) {
+void Watch::watchRecommendation(Session &sess, User &activeUser) {
     bool watchNext = true;
-    Watchable *reccomanditon = activeUser->getRecommendation(sess);
+    Watchable *recommendation = activeUser.getRecommendation(sess);
     std::string input;
 
-    std::cout << "We recommend watching " << reccomanditon->toString() << ", continue watching? [y/n]\n";
+    std::cout << "We recommend watching " << recommendation->toString() << ", continue watching? [y/n]\n";
     std::cin >> input;
     if(input.size() == 1){
         if(input[0] == 'y'){
-
+            BaseAction &watchRec = *(new Watch());
+            // TODO set args in sess to the id of the watchable watch
+            sess.addToActionLog( watchRec);
+            watchRec.act(sess);
         } else {
             watchNext = false;
         }
     } else {
         error("invalid input");
+    }
+}
+//endregion
+
+//region PrintActionsLog
+/* Action that prints the action log for the active user
+ * <action_tostring> <action status>  */
+void PrintActionsLog::act(Session &sess) {
+
+    const std::vector<std::string>& vArgs = getArgs();
+
+    if(vArgs.empty()) {
+        error("Usage: log");
+    } else {
+        User *activeUser = sess.getActiveUser();
+        std::vector<BaseAction*> userActions = sess.getActionLog();
+
+        for(unsigned long i=0; i < userActions.size(); i=i+1){
+            std::cout << userActions[i]->toString() << " " << userActions[i]->getStatus() << "\n";
+        }
+        complete();
+    }
+}
+
+/* Return a string representation of the action*/
+std::string PrintActionsLog::toString() const {
+    if(getStatus() != ERROR){
+        return "PrintActionsLog" + std::to_string(getStatus());
+    } else {
+        return  "PrintActionsLog" + getErrorMsg();
+    }
+}
+//endregion
+
+//region Exit
+/* Action that end the session of the user */
+void Exit::act(Session &sess) {
+
+    const std::vector<std::string>& vArgs = getArgs();
+
+    if(vArgs.empty()) {
+        error("Usage: Exit");
+    } else {
+        sess.raiseExistFlag();
+        complete();
+    }
+}
+
+/* Return a string representation of the action*/
+std::string Exit::toString() const {
+    if(getStatus() != ERROR){
+        return "Exit" + std::to_string(getStatus());
+    } else {
+        return  "Exit" + getErrorMsg();
     }
 }
 //endregion
