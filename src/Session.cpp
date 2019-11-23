@@ -129,6 +129,11 @@ vector<Watchable*> Session::getContent() const {
 vector<BaseAction*> Session::getActionLog() const {
     return actionsLog;
 }
+
+void Session::addToActionLog(BaseAction &action) {
+    actionsLog.push_back(&action);
+}
+
 Watchable* Session::getContentById(long id) {
     return content[id];
 }
