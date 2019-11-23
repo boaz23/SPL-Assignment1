@@ -10,12 +10,15 @@ using json = nlohmann::json;
 void Session::clean() {
     for (auto &watchable : content) {
         delete watchable;
+        watchable = nullptr;
     }
     for (auto &action : actionsLog) {
         delete action;
+        action = nullptr;
     }
     for (auto &user : userMap) {
         delete user.second;
+        user.second = nullptr;
     }
     activeUser = nullptr;
 }
@@ -96,19 +99,24 @@ Session::Session(const string &configFilePath) : content(), actionsLog(), userMa
     for (int i = 0; i < tvSerieses.size(); ++i) {
         TvSeries& tvSeries = *tvSerieses[i];
         vector<int> seasons = tvSeries.getSeasons();
+        Episode* lastEpisode = nullptr;
         for (int season = 0; season < seasons.size(); ++season) {
             int episodeCount = seasons[i];
-            for (int episode = 0; episode < episodeCount; ++episode) {
-                content.push_back(new Episode(
+            for (int iEpisode = 0; iEpisode < episodeCount; ++iEpisode) {
+                Episode* pEpisode = new Episode(
                         ++watchableId,
                         tvSeries.getName(),
                         tvSeries.getEpisodeLength(),
                         season + 1,
-                        episode + 1,
+                        iEpisode + 1,
                         tvSeries.getTags()
-                        ));
+                );
+                pEpisode->setNextEpisodeId(watchableId + 1);
+                lastEpisode = pEpisode;
+                content.push_back(pEpisode);
             }
         }
+        lastEpisode->setNextEpisodeId(-1);
     }
 }
 

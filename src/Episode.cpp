@@ -27,6 +27,10 @@ Watchable* Episode::clone() const {
     return new Episode(getId(), seriesName, getLength(), season, episode, getTags());
 }
 
+void Episode::setNextEpisodeId(long nextEpisodeId) {
+    this->nextEpisodeId = nextEpisodeId;
+}
+
 string Episode::paddNumber(int n) const {
     if (n < 10) {
         return "0" + to_string(n);
