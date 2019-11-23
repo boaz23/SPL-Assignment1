@@ -20,6 +20,7 @@ public:
 	virtual std::string toString() const=0;
     void setArgs(std::vector<std::string> &args);
     const std::vector<std::string>& getArgs();
+    virtual BaseAction* clone() const = 0;
 protected:
 	void complete();
 	void error(const std::string& errorMsg);
@@ -34,18 +35,21 @@ class CreateUser  : public BaseAction {
 public:
 	virtual void act(Session& sess);
 	virtual std::string toString() const;
+	virtual BaseAction* clone() const;
 };
 
 class ChangeActiveUser : public BaseAction {
 public:
 	virtual void act(Session& sess);
 	virtual std::string toString() const;
+    virtual BaseAction* clone() const;
 };
 
 class DeleteUser : public BaseAction {
 public:
 	virtual void act(Session & sess);
 	virtual std::string toString() const;
+    virtual BaseAction* clone() const;
 };
 
 
@@ -53,18 +57,21 @@ class DuplicateUser : public BaseAction {
 public:
 	virtual void act(Session & sess);
 	virtual std::string toString() const;
+    virtual BaseAction* clone() const;
 };
 
 class PrintContentList : public BaseAction {
 public:
 	virtual void act (Session& sess);
 	virtual std::string toString() const;
+    virtual BaseAction* clone() const;
 };
 
 class PrintWatchHistory : public BaseAction {
 public:
 	virtual void act (Session& sess);
 	virtual std::string toString() const;
+    virtual BaseAction* clone() const;
 };
 
 
@@ -72,6 +79,7 @@ class Watch : public BaseAction {
 public:
 	virtual void act(Session& sess);
 	virtual std::string toString() const;
+    virtual BaseAction* clone() const;
 };
 
 
@@ -79,11 +87,13 @@ class PrintActionsLog : public BaseAction {
 public:
 	virtual void act(Session& sess);
 	virtual std::string toString() const;
+    virtual BaseAction* clone() const;
 };
 
 class Exit : public BaseAction {
 public:
 	virtual void act(Session& sess);
 	virtual std::string toString() const;
+    virtual BaseAction* clone() const;
 };
 #endif
