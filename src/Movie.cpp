@@ -11,7 +11,7 @@ string Movie::toString() const {
     return name;
 }
 
-Watchable* Watchable::getNextWatchable(Session &session) const {
+Watchable* Movie::getNextWatchable(Session &session) const {
     return session.getActiveUser()->getRecommendation(session);
 }
 
