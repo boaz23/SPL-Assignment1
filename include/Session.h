@@ -16,11 +16,13 @@ public:
     void start();
     std::vector<Watchable*> getContent() const;
     std::vector<BaseAction*> getActionLog() const;
+    Watchable* getContentById(long id);
+    void addToActionLog(BaseAction &action);
     User* getActiveUser() const;
-    User* getUser(const std::string &name) const;
-    bool addUser(User *user);
-    bool changeActiveUser(User *user);
-    bool removeUser(User *user);
+    User* getUser(const std::string &name);
+    bool addUser(User &user);
+    bool changeActiveUser(User &user);
+    bool removeUser(User &user);
     void raiseExistFlag();
 private:
     std::vector<Watchable*> content;
