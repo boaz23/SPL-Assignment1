@@ -16,6 +16,7 @@ public:
     void start();
     std::vector<Watchable*> getContent() const;
     std::vector<BaseAction*> getActionLog() const;
+    Watchable* getContentById(long id);
     User* getActiveUser() const;
     User* getUser(const std::string &name) const;
     bool addUser(User *user);
