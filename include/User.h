@@ -15,7 +15,7 @@ public:
     std::string getName() const;
     std::vector<Watchable*> get_history() const;
     static User* createUser(const std::string &name, const std::string &recommendationAlgorithm);
-    User* createCopy() const;
+    virtual User* clone() const = 0;
     void addToHistory(Watchable *watchable);
 protected:
     std::vector<Watchable*> history;
@@ -29,6 +29,7 @@ class LengthRecommenderUser : public User {
 public:
     LengthRecommenderUser(const std::string& name);
     virtual Watchable* getRecommendation(Session& s);
+    virtual User* clone() const;
 private:
 };
 
@@ -36,6 +37,7 @@ class RerunRecommenderUser : public User {
 public:
     RerunRecommenderUser(const std::string& name);
     virtual Watchable* getRecommendation(Session& s);
+    virtual User* clone() const;
 private:
     int historyIndex;
 };
@@ -44,6 +46,7 @@ class GenreRecommenderUser : public User {
 public:
     GenreRecommenderUser(const std::string& name);
     virtual Watchable* getRecommendation(Session& s);
+    virtual User* clone() const;
 private:
 };
 
