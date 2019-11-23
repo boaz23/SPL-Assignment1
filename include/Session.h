@@ -5,6 +5,8 @@
 #include <unordered_map>
 #include <string>
 #include "Action.h"
+#include "ActionFactory.h"
+#include "json.hpp"
 
 class User;
 class Watchable;
@@ -34,10 +36,19 @@ private:
     std::vector<BaseAction*> actionsLog;
     std::unordered_map<std::string,User*> userMap;
     User* activeUser;
+
     bool exitFlag;
+    std::unordered_map<std::string, ActionFactory*> actionsFactory;
+
+    const std::string DEFAULT_USER_NAME = "default";
 
     void clean();
     void steal(Session &other);
     void copy(const Session &other);
+
+    void initializeFromConfig(const std::string &configFilePath);
+    void initializeFromConfig(const nlohmann::json &jsonCfg);
+
+    static std::vector<std::string> splitStringBySpace(std::string str);
 };
 #endif
