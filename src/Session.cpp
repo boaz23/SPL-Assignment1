@@ -75,7 +75,7 @@ Session& Session::operator=(Session &&rval) {
 }
 
 Session::Session(const string &configFilePath) : content(), actionsLog(), userMap(), activeUser(nullptr), exitFlag(false) {
-    long watchableId = 0;
+    long watchableId = -1;
     vector<Watchable*> content;
 
     ifstream ifsCfg(configFilePath);
@@ -114,4 +114,51 @@ Session::Session(const string &configFilePath) : content(), actionsLog(), userMa
 
 void Session::start() {
 
+}
+
+vector<Watchable*> Session::getContent() const {
+    return content;
+}
+vector<BaseAction*> Session::getActionLog() const {
+    return actionsLog;
+}
+Watchable* Session::getContentById(long id) {
+    return content[id];
+}
+
+User* Session::getActiveUser() const {
+    return activeUser;
+}
+User* Session::getUser(const string &name) {
+    return userMap[name];
+}
+bool Session::addUser(User *user) {
+    if (user == nullptr) {
+        throw "User cannot be null.";
+    }
+
+    if (userMap.count(user->getName()) > 0) {
+        return false;
+    }
+
+    userMap[user->getName()] = user;
+    return true;
+}
+bool Session::changeActiveUser(User *user) {
+    if (user == nullptr) {
+        throw "User cannot be null.";
+    }
+
+    activeUser = user;
+}
+bool Session::removeUser(User *user) {
+    if (user == nullptr) {
+        throw "User cannot be null.";
+    }
+
+    userMap.erase(user->getName());
+}
+
+void Session::raiseExistFlag() {
+    exitFlag = true;
 }

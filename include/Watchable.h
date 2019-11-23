@@ -45,6 +45,8 @@ private:
     int season;
     int episode;
     long nextEpisodeId;
+
+    std::string paddNumber(int n) const;
 };
 
 #endif
