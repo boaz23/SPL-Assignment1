@@ -157,6 +157,10 @@ User* Session::getActiveUser() const {
     return activeUser;
 }
 User* Session::getUser(const string &name) {
+    if (userMap.count(name) == 0) {
+        return nullptr;
+    }
+
     return userMap[name];
 }
 bool Session::addUser(User &user) {
@@ -168,10 +172,18 @@ bool Session::addUser(User &user) {
     return true;
 }
 bool Session::changeActiveUser(User &user) {
+    if (userMap.count(user.getName()) == 0) {
+        return false;
+    }
+
     activeUser = &user;
     return true;
 }
 bool Session::removeUser(User &user) {
+    if (userMap.count(user.getName()) == 0) {
+        return false;
+    }
+
     userMap.erase(user.getName());
     return true;
 }
