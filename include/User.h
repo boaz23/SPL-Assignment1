@@ -44,7 +44,7 @@ public:
     virtual User* createCopy(const std::string &name) const;
     virtual User* clone() const;
 private:
-    int historyIndex;
+    size_t historyIndex;
 };
 
 class GenreRecommenderUser : public User {
