@@ -14,6 +14,7 @@ public:
     Session(const std::string &configFilePath);
     ~Session();
     void start();
+    // TODO: check if we can return a const reference
     std::vector<Watchable*> getContent() const;
     std::vector<BaseAction*> getActionLog() const;
     Watchable* getContentById(long id);

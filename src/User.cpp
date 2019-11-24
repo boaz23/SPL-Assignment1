@@ -90,6 +90,26 @@ User *LengthRecommenderUser::clone() const {
     return createCopy(getName());
 }
 
+RerunRecommenderUser::RerunRecommenderUser(const std::string &name) : User(name), historyIndex(-1) {}
+
+User* RerunRecommenderUser::createCopy(const std::string &name) const {
+    RerunRecommenderUser *duplicate = new RerunRecommenderUser(name);
+    duplicate->history = history;
+    return duplicate;
+}
+
+User* RerunRecommenderUser::clone() const {
+    return createCopy(getName());
+}
+
+Watchable* RerunRecommenderUser::getRecommendation(Session &s) {
+    if (history.empty()) {
+        return nullptr;
+    }
+
+    return history[(++historyIndex) % history.size()];
+}
+
 GenreRecommenderUser::GenreRecommenderUser(const std::string &name) : User(name) { }
 
 User* GenreRecommenderUser::createCopy(const std::string &name) const {
@@ -106,6 +126,7 @@ User* GenreRecommenderUser::clone() const {
 Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
     std::vector<Watchable*> content = s.getContent();
 
+    // TODO: check if vector initializes all elements to default value
     std::vector<bool> watched(content.size());
     std::unordered_map<std::string, int> tagsPopularityMap;
     for (const auto &watchable : history) {
