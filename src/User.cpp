@@ -3,9 +3,10 @@
 //
 
 #include <algorithm>
+#include <stdlib.h>
 #include "../include/User.h"
 #include "../include/Watchable.h"
-#include <stdlib.h>
+#include "../include/Session.h"
 
 //region User
 User::User(const std::string &name): name(name), history(){
