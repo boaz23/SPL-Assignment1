@@ -150,6 +150,10 @@ void Session::addToActionLog(BaseAction &action) {
 }
 
 Watchable* Session::getContentById(long id) {
+    if (id < 0 || id >= content.size()) {
+        return nullptr;
+    }
+
     return content[id];
 }
 
