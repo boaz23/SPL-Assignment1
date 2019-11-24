@@ -93,6 +93,13 @@ Session& Session::operator=(Session &&rval) {
 
 Session::Session(const string &configFilePath) : content(), actionsLog(), userMap(), activeUser(nullptr), exitFlag(false), actionsFactory() {
     initializeFromConfig(configFilePath);
+    
+    cout << "SPLFLIX is now on!" << endl;
+    if (userMap.count(DEFAULT_USER_NAME) == 0) {
+        User* pUser = new LengthRecommenderUser(DEFAULT_USER_NAME);
+        userMap[pUser->getName()] = pUser;
+        activeUser = pUser;
+    }
 
     actionsFactory["createuser"] = new CreateUserActionFactory();
     actionsFactory["changeuser"] = new ChangeActiveUserActionFactory();
@@ -106,13 +113,6 @@ Session::Session(const string &configFilePath) : content(), actionsLog(), userMa
 }
 
 void Session::start() {
-    cout << "SPLFLIX is now on!" << endl;
-    if (userMap.count(DEFAULT_USER_NAME) == 0) {
-        User* pUser = new LengthRecommenderUser(DEFAULT_USER_NAME);
-        userMap[pUser->getName()] = pUser;
-        activeUser = pUser;
-    }
-
     exitFlag = false;
     while (!exitFlag) {
         string command;

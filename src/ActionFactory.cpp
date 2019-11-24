@@ -10,7 +10,6 @@ ActionFactory* CreateUserActionFactory::clone() {
     return new CreateUserActionFactory();
 }
 
-
 BaseAction* ChangeActiveUserActionFactory::createAction() {
     return new ChangeActiveUser();
 //    return nullptr;

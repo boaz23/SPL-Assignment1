@@ -33,7 +33,8 @@
 
 # Build Files
 cmake-build-debug/
-bin/
+bin/*
+!bin
 
 # Specific files
 .idea/workspace.xml
