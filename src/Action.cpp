@@ -23,7 +23,7 @@ void BaseAction::complete() {
  * with the given string */
 void BaseAction::error(const std::string &errorMsg) {
     status = ERROR;
-    this->errorMsg = "ERROR" + errorMsg;
+    this->errorMsg = errorMsg;
 }
 
 /* Return the error message if there is one */
@@ -80,9 +80,9 @@ void CreateUser::act(Session &sess) {
 /* Return a string representation of the action*/
 std::string CreateUser::toString() const {
     if(getStatus() != ERROR){
-        return "CreateUser" + std::to_string(getStatus());
+        return "CreateUser " + std::to_string(getStatus());
     } else {
-        return  "CreateUser" + getErrorMsg();
+        return  "CreateUser ERROR: " + getErrorMsg();
     }
 }
 
@@ -101,11 +101,10 @@ void ChangeActiveUser::act(Session &sess) {
     const std::vector<std::string>& vArgs = getArgs();
 
     if(vArgs.size() != 1){
-        error("changeuser <user_name>");
+        error("Usage: changeuser <user_name>");
     } else {
         if(sess.changeActiveUser(*sess.getUser(vArgs[0]))){
             complete();
-
         } else {
             error("the user name doesnt exists");
         }
@@ -115,9 +114,9 @@ void ChangeActiveUser::act(Session &sess) {
 /* Return a string representation of the action*/
 std::string ChangeActiveUser::toString() const {
     if(getStatus() != ERROR){
-        return "ChangeActiveUser" + std::to_string(getStatus());
+        return "ChangeActiveUser " + std::to_string(getStatus());
     } else {
-        return  "ChangeActiveUser" + getErrorMsg();
+        return  "ChangeActiveUser ERROR: " + getErrorMsg();
     }
 }
 
@@ -135,7 +134,7 @@ void DeleteUser::act(Session &sess) {
     const std::vector<std::string>& vArgs = getArgs();
 
     if(vArgs.size() != 1){
-        error("deleteuser <user_name>");
+        error("Usage: deleteuser <user_name>");
     } else {
         if(sess.removeUser(*sess.getUser(vArgs[0]))){
             complete();
@@ -149,9 +148,9 @@ void DeleteUser::act(Session &sess) {
 /* Return a string representation of the action*/
 std::string DeleteUser::toString() const {
     if(getStatus() != ERROR){
-        return "DeleteUser" + std::to_string(getStatus());
+        return "DeleteUser " + std::to_string(getStatus());
     } else {
-        return  "DeleteUser" + getErrorMsg();
+        return  "DeleteUser ERROR: " + getErrorMsg();
     }
 }
 
@@ -190,9 +189,9 @@ void DuplicateUser::act(Session &sess) {
 /* Return a string representation of the action*/
 std::string DuplicateUser::toString() const {
     if(getStatus() != ERROR){
-        return "DuplicateUser" + std::to_string(getStatus());
+        return "DuplicateUser " + std::to_string(getStatus());
     } else {
-        return  "DuplicateUser" + getErrorMsg();
+        return  "DuplicateUser ERROR: " + getErrorMsg();
     }
 }
 
@@ -210,7 +209,7 @@ void PrintContentList::act(Session &sess) {
 
     const std::vector<std::string>& vArgs = getArgs();
 
-    if(vArgs.size() != 2) {
+    if(!vArgs.empty()) {
         error("Usage: content");
     } else {
         User *activeUser = sess.getActiveUser();
@@ -239,9 +238,9 @@ void PrintContentList::act(Session &sess) {
 /* Return a string representation of the action*/
 std::string PrintContentList::toString() const {
     if(getStatus() != ERROR){
-        return "PrintContentList" + std::to_string(getStatus());
+        return "PrintContentList " + std::to_string(getStatus());
     } else {
-        return  "PrintContentList" + getErrorMsg();
+        return  "PrintContentList ERROR: " + getErrorMsg();
     }
 }
 
@@ -259,8 +258,8 @@ void PrintWatchHistory::act(Session &sess) {
 
     const std::vector<std::string>& vArgs = getArgs();
 
-    if(vArgs.size() != 2) {
-        error("Usage: watchhist");
+    if(!vArgs.empty()) {
+        error("Usage: watchlist");
     } else {
         User *activeUser = sess.getActiveUser();
         std::vector<Watchable *> userHistory = activeUser->get_history();
@@ -276,9 +275,9 @@ void PrintWatchHistory::act(Session &sess) {
 /* Return a string representation of the action*/
 std::string PrintWatchHistory::toString() const {
     if(getStatus() != ERROR){
-        return "PrintWatchHistory" + std::to_string(getStatus());
+        return "PrintWatchHistory " + std::to_string(getStatus());
     } else {
-        return  "PrintWatchHistory" + getErrorMsg();
+        return  "PrintWatchHistory ERROR: " + getErrorMsg();
     }
 }
 
@@ -297,22 +296,23 @@ void Watch::act(Session &sess) {
     const std::vector<std::string>& vArgs = getArgs();
 
     if(vArgs.size() != 1) {
-        error("Usage: watch<content_id>");
+        error("Usage: watch <content_id>");
     } else {
         User &activeUser = *(sess.getActiveUser());
         std::vector<Watchable *> content = sess.getContent();
 
         std::string::size_type sz;
-        unsigned long cotentId = -1;
+        unsigned long contentId = -1;
         try {
-            cotentId = std::stoi(vArgs[0], &sz);
+            contentId = std::stoi(vArgs[0], &sz);
         } catch (std::exception& e){
             error("The content id isn't valid");
         }
 
-        if(cotentId > 0 & cotentId <= content.size()){
-            std::cout << "Watching " << content[cotentId]->toString() << "\n";
-            activeUser.addToHistory(content[cotentId]);
+        // TODO: call session.getContentById(contentId)
+        if(contentId >= 0 & contentId < content.size()) {
+            std::cout << "Watching " << content[contentId]->toString() << "\n";
+            activeUser.addToHistory(content[contentId]);
             complete();
 
             watchRecommendation(sess, activeUser);
@@ -323,17 +323,19 @@ void Watch::act(Session &sess) {
 /* Return a string representation of the action*/
 std::string Watch::toString() const {
     if(getStatus() != ERROR){
-        return "PrintWatchHistory" + std::to_string(getStatus());
+        return "PrintWatchHistory " + std::to_string(getStatus());
     } else {
-        return  "PrintWatchHistory" + getErrorMsg();
+        return  "PrintWatchHistory ERROR: " + getErrorMsg();
     }
 }
 
+// TODO: call Watchable.getNextWatchable(Session) instead
 void Watch::watchRecommendation(Session &sess, User &activeUser) {
     bool watchNext = true;
     Watchable *recommendation = activeUser.getRecommendation(sess);
     std::string input;
 
+    // TODO: add null check (because there might be nothing recommended)
     std::cout << "We recommend watching " << recommendation->toString() << ", continue watching? [y/n]\n";
     std::cin >> input;
     if(input.size() == 1){
@@ -346,8 +348,10 @@ void Watch::watchRecommendation(Session &sess, User &activeUser) {
 
             sess.addToActionLog( watchRec);
             watchRec.act(sess);
-        } else {
+        } else if (input[0] == 'x') {
             watchNext = false;
+        } else {
+            error("invalid input");
         }
     } else {
         error("invalid input");
@@ -368,14 +372,13 @@ void PrintActionsLog::act(Session &sess) {
 
     const std::vector<std::string>& vArgs = getArgs();
 
-    if(vArgs.empty()) {
+    if(!vArgs.empty()) {
         error("Usage: log");
     } else {
-        User *activeUser = sess.getActiveUser();
-        std::vector<BaseAction*> userActions = sess.getActionLog();
+        std::vector<BaseAction*> actions = sess.getActionLog();
 
-        for(unsigned long i=0; i < userActions.size(); i=i+1){
-            std::cout << userActions[i]->toString() << " " << userActions[i]->getStatus() << "\n";
+        for(unsigned long i=0; i < actions.size(); i= i + 1){
+            std::cout << actions[i]->toString() << " " << actions[i]->getStatus() << "\n";
         }
         complete();
     }
@@ -384,9 +387,9 @@ void PrintActionsLog::act(Session &sess) {
 /* Return a string representation of the action*/
 std::string PrintActionsLog::toString() const {
     if(getStatus() != ERROR){
-        return "PrintActionsLog" + std::to_string(getStatus());
+        return "PrintActionsLog " + std::to_string(getStatus());
     } else {
-        return  "PrintActionsLog" + getErrorMsg();
+        return  "PrintActionsLog ERROR: " + getErrorMsg();
     }
 }
 
@@ -403,8 +406,8 @@ void Exit::act(Session &sess) {
 
     const std::vector<std::string>& vArgs = getArgs();
 
-    if(vArgs.empty()) {
-        error("Usage: Exit");
+    if(!vArgs.empty()) {
+        error("Usage: exit");
     } else {
         sess.raiseExistFlag();
         complete();
@@ -414,9 +417,9 @@ void Exit::act(Session &sess) {
 /* Return a string representation of the action*/
 std::string Exit::toString() const {
     if(getStatus() != ERROR){
-        return "Exit" + std::to_string(getStatus());
+        return "Exit " + std::to_string(getStatus());
     } else {
-        return  "Exit" + getErrorMsg();
+        return  "Exit ERROR: " + getErrorMsg();
     }
 }
 
