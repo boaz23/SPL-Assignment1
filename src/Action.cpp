@@ -41,6 +41,12 @@ const std::vector<std::string>& BaseAction::getArgs() {
     return args;
 }
 
+void BaseAction::copyData(BaseAction &copyTo) {
+    copyTo.setArgs(getArgs());
+    copyTo.status = status;
+    copyTo.errorMsg = errorMsg;
+}
+
 BaseAction::~BaseAction() = default;
 //endregion
 
@@ -297,7 +303,11 @@ void Watch::watchRecommendation(Session &sess, User &activeUser) {
     if(input.size() == 1){
         if(input[0] == 'y'){
             BaseAction &watchRec = *(new Watch());
-            // TODO set args in sess to the id of the watchable watch
+
+            std::vector<std::string> arg;
+            arg.push_back(std::to_string(recommendation->getId()));
+            setArgs(arg);
+
             sess.addToActionLog( watchRec);
             watchRec.act(sess);
         } else {

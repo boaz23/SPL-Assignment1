@@ -24,6 +24,7 @@ public:
     void setArgs(const std::vector<std::string> &args);
     const std::vector<std::string>& getArgs();
     virtual BaseAction* clone() const = 0;
+    virtual void copyData(BaseAction& copyTo);
 protected:
 	void complete();
 	void error(const std::string& errorMsg);

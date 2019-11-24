@@ -16,9 +16,9 @@ public:
     std::string getName() const;
     std::vector<Watchable*> get_history() const;
     static User* createUser(const std::string &name, const std::string &recommendationAlgorithm);
-    User* createCopy(const std::string name) const;
+    virtual User* createCopy(const std::string &name) const = 0; // TODO add to draw io
     virtual User* clone() const = 0;
-    void addToHistory(Watchable *watchable);
+    virtual void addToHistory(Watchable *watchable); // TODO add to draw io
 protected:
     std::vector<Watchable*> history;
 private:
@@ -32,7 +32,11 @@ public:
     LengthRecommenderUser(const std::string& name);
     virtual Watchable* getRecommendation(Session& s);
     virtual User* clone() const;
+    virtual User* createCopy(const std::string &name) const;
+    virtual void addToHistory(Watchable *watchable);
 private:
+    unsigned long totalWatchTime; // TODO add to draw io
+
 };
 
 class RerunRecommenderUser : public User {
