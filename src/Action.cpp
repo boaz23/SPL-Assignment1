@@ -85,6 +85,12 @@ std::string CreateUser::toString() const {
         return  "CreateUser" + getErrorMsg();
     }
 }
+
+BaseAction *CreateUser::clone() {
+    CreateUser *newAction = new CreateUser();
+    copyData(*newAction);
+    return newAction;
+}
 //endregion
 
 //region ChangeActiveUser
@@ -114,6 +120,12 @@ std::string ChangeActiveUser::toString() const {
         return  "ChangeActiveUser" + getErrorMsg();
     }
 }
+
+BaseAction *ChangeActiveUser::clone() {
+    ChangeActiveUser *newAction = new ChangeActiveUser();
+    copyData(*newAction);
+    return newAction;
+}
 //endregion
 
 //region DeleteUser
@@ -141,6 +153,12 @@ std::string DeleteUser::toString() const {
     } else {
         return  "DeleteUser" + getErrorMsg();
     }
+}
+
+BaseAction *DeleteUser::clone() {
+    DeleteUser *newAction = new DeleteUser();
+    copyData(*newAction);
+    return newAction;
 }
 //endregion
 
@@ -176,6 +194,12 @@ std::string DuplicateUser::toString() const {
     } else {
         return  "DuplicateUser" + getErrorMsg();
     }
+}
+
+BaseAction *DuplicateUser::clone() {
+    DeleteUser *newAction = new DeleteUser();
+    copyData(*newAction);
+    return newAction;
 }
 //endregion
 
@@ -220,6 +244,12 @@ std::string PrintContentList::toString() const {
         return  "PrintContentList" + getErrorMsg();
     }
 }
+
+BaseAction *PrintContentList::clone() {
+    PrintContentList *newAction = new PrintContentList();
+    copyData(*newAction);
+    return newAction;
+}
 //endregion
 
 //region PrintWatchHistory
@@ -250,6 +280,12 @@ std::string PrintWatchHistory::toString() const {
     } else {
         return  "PrintWatchHistory" + getErrorMsg();
     }
+}
+
+BaseAction *PrintWatchHistory::clone() {
+    PrintWatchHistory *newAction = new PrintWatchHistory();
+    copyData(*newAction);
+    return newAction;
 }
 //endregion
 
@@ -317,6 +353,12 @@ void Watch::watchRecommendation(Session &sess, User &activeUser) {
         error("invalid input");
     }
 }
+
+BaseAction *Watch::clone() {
+    Watch *newAction = new Watch();
+    copyData(*newAction);
+    return newAction;
+}
 //endregion
 
 //region PrintActionsLog
@@ -347,6 +389,12 @@ std::string PrintActionsLog::toString() const {
         return  "PrintActionsLog" + getErrorMsg();
     }
 }
+
+BaseAction *PrintActionsLog::clone() {
+    PrintActionsLog *newAction = new PrintActionsLog();
+    copyData(*newAction);
+    return newAction;
+}
 //endregion
 
 //region Exit
@@ -370,5 +418,11 @@ std::string Exit::toString() const {
     } else {
         return  "Exit" + getErrorMsg();
     }
+}
+
+BaseAction *Exit::clone() {
+    Exit *newAction = new Exit();
+    copyData(*newAction);
+    return newAction;
 }
 //endregion
