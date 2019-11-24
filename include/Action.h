@@ -5,7 +5,9 @@
 #include <vector>
 #include <iostream>
 
+
 class Session;
+class User;
 
 enum ActionStatus{
 	PENDING, COMPLETED, ERROR
@@ -21,7 +23,8 @@ public:
 	virtual std::string toString() const=0;
     void setArgs(const std::vector<std::string> &args);
     const std::vector<std::string>& getArgs();
-    virtual BaseAction* clone() const = 0;
+    virtual BaseAction* clone() = 0;
+    virtual void copyData(BaseAction& copyTo);
 protected:
 	void complete();
 	void error(const std::string& errorMsg);
@@ -36,21 +39,21 @@ class CreateUser  : public BaseAction {
 public:
 	virtual void act(Session& sess);
 	virtual std::string toString() const;
-	virtual BaseAction* clone() const;
+	virtual BaseAction* clone();
 };
 
 class ChangeActiveUser : public BaseAction {
 public:
 	virtual void act(Session& sess);
 	virtual std::string toString() const;
-    virtual BaseAction* clone() const;
+    virtual BaseAction* clone();
 };
 
 class DeleteUser : public BaseAction {
 public:
 	virtual void act(Session & sess);
 	virtual std::string toString() const;
-    virtual BaseAction* clone() const;
+    virtual BaseAction* clone();
 };
 
 
@@ -58,21 +61,21 @@ class DuplicateUser : public BaseAction {
 public:
 	virtual void act(Session & sess);
 	virtual std::string toString() const;
-    virtual BaseAction* clone() const;
+    virtual BaseAction* clone();
 };
 
 class PrintContentList : public BaseAction {
 public:
 	virtual void act (Session& sess);
 	virtual std::string toString() const;
-    virtual BaseAction* clone() const;
+    virtual BaseAction* clone();
 };
 
 class PrintWatchHistory : public BaseAction {
 public:
 	virtual void act (Session& sess);
 	virtual std::string toString() const;
-    virtual BaseAction* clone() const;
+    virtual BaseAction* clone();
 };
 
 
@@ -80,7 +83,10 @@ class Watch : public BaseAction {
 public:
 	virtual void act(Session& sess);
 	virtual std::string toString() const;
-    virtual BaseAction* clone() const;
+	virtual BaseAction* clone() ;
+private:
+    virtual void watchRecommendation(Session &sess, User &activeUser);
+
 };
 
 
@@ -88,13 +94,13 @@ class PrintActionsLog : public BaseAction {
 public:
 	virtual void act(Session& sess);
 	virtual std::string toString() const;
-    virtual BaseAction* clone() const;
+    virtual BaseAction* clone() ;
 };
 
 class Exit : public BaseAction {
 public:
 	virtual void act(Session& sess);
 	virtual std::string toString() const;
-    virtual BaseAction* clone() const;
+    virtual BaseAction* clone() ;
 };
 #endif
