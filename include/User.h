@@ -36,6 +36,10 @@ public:
     virtual void addToHistory(Watchable *watchable);
 private:
     unsigned long totalWatchTime; // TODO add to draw io
+    int avarage;
+    unsigned long historySize;
+    std::vector<Watchable *> contentNotWatched;
+    bool watchedAll;
 
 };
 
