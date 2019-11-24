@@ -47,6 +47,7 @@ class RerunRecommenderUser : public User {
 public:
     RerunRecommenderUser(const std::string& name);
     virtual Watchable* getRecommendation(Session& s);
+    virtual User* createCopy(const std::string &name) const;
     virtual User* clone() const;
 private:
     int historyIndex;
@@ -56,6 +57,7 @@ class GenreRecommenderUser : public User {
 public:
     GenreRecommenderUser(const std::string& name);
     virtual Watchable* getRecommendation(Session& s);
+    virtual User* createCopy(const std::string &name) const;
     virtual User* clone() const;
 private:
 };

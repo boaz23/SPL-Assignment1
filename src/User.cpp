@@ -2,7 +2,9 @@
 // Created by netanel on 24/11/2019.
 //
 
+#include <algorithm>
 #include "../include/User.h"
+#include "../include/Watchable.h"
 
 //region User
 User::User(const std::string &name): name(name), history(){
@@ -42,6 +44,7 @@ LengthRecommenderUser::LengthRecommenderUser(const std::string& name): User(name
                                                                         avarage(0), historySize(0), contentNotWatched(){
 }
 
+// TODO: test
 Watchable *LengthRecommenderUser::getRecommendation(Session &s) {
     // Create the vector for content that wasnt watch yed
     if(contentNotWatched.empty() && watchedAll == false){
@@ -78,6 +81,7 @@ void LengthRecommenderUser::addToHistory(Watchable *watchable) {
 
 User *LengthRecommenderUser::createCopy(const std::string &name) const {
     LengthRecommenderUser *newUser = new LengthRecommenderUser(name);
+    // TODO: check it actually copies rather than moves
     newUser->history = history;
     return  newUser;
 }
@@ -86,5 +90,63 @@ User *LengthRecommenderUser::clone() const {
     return createCopy(getName());
 }
 
+GenreRecommenderUser::GenreRecommenderUser(const std::string &name) : User(name) { }
 
+User* GenreRecommenderUser::createCopy(const std::string &name) const {
+    GenreRecommenderUser *duplicate = new GenreRecommenderUser(name);
+    duplicate->history = history;
+    return duplicate;
+}
 
+User* GenreRecommenderUser::clone() const {
+    return createCopy(getName());
+}
+
+// TODO: test
+Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
+    std::vector<Watchable*> content = s.getContent();
+
+    std::vector<bool> watched(content.size());
+    std::unordered_map<std::string, int> tagsPopularityMap;
+    for (const auto &watchable : history) {
+        watched[watchable->getId()] = true;
+        for (const auto &tag : watchable->getTags()) {
+            ++tagsPopularityMap[tag];
+        }
+    }
+
+    std::vector<std::tuple<Watchable*, std::string, int, int>> candidates(content.size());
+    for (size_t i = 0; i < content.size(); ++i) {
+        Watchable *watchable = content[i];
+        if (watched[watchable->getId()]) {
+            continue;
+        }
+
+        std::vector<std::string> watchableTags = watchable->getTags();
+        std::string mostPopularTag = *std::max_element(watchableTags.begin(), watchableTags.end(), [&tagsPopularityMap](const std::string &a, const std::string &b) {
+            if (tagsPopularityMap[a] == tagsPopularityMap[b]) {
+                return a < b;
+            }
+
+            return tagsPopularityMap[a] < tagsPopularityMap[b];
+        });
+        candidates[i] = std::make_tuple(content[i], mostPopularTag, tagsPopularityMap[mostPopularTag], i);
+    }
+
+    std::sort(candidates.begin(), candidates.end(), [](const std::tuple<Watchable*, std::string, int, int> &a, const std::tuple<Watchable*, std::string, int, int> &b) {
+        if (std::get<2>(a) == std::get<2>(b)) {
+            if (std::get<1>(a) == std::get<1>(b)) {
+                return std::get<3>(a) < std::get<3>(b);
+            }
+
+            return std::get<1>(a) < std::get<1>(b);
+        }
+
+        return std::get<2>(a) < std::get<2>(b);
+    });
+
+    if (candidates.empty()) {
+        return nullptr;
+    }
+    return std::get<0>(candidates[candidates.size() - 1]);
+}
