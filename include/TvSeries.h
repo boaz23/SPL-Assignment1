@@ -8,10 +8,10 @@
 class TvSeries {
 public:
     TvSeries(const std::string& name, int episodeLength, const std::vector<int>& seasons, const std::vector<std::string>& tags);
-    std::string getName() const;
+    const std::string& getName() const;
     int getEpisodeLength() const;
-    std::vector<int> getSeasons() const;
-    std::vector<std::string> getTags() const;
+    const std::vector<int>& getSeasons() const;
+    const std::vector<std::string>& getTags() const;
 
 private:
     std::string _name;

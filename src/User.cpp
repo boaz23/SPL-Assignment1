@@ -50,7 +50,7 @@ Watchable *LengthRecommenderUser::getRecommendation(Session &s) {
     int avarage = 0;
     unsigned long sum = 0;
 
-    std::vector<Watchable*> content = s.getContent();
+    const std::vector<Watchable*>& content = s.getContent();
     if(!history.empty()) {
         std::vector<bool> watched(content.size());
         for (unsigned long i = 0; i < watched.size(); i = i + 1) {
@@ -127,7 +127,7 @@ User* GenreRecommenderUser::clone() const {
 
 // TODO: test
 Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
-    std::vector<Watchable*> content = s.getContent();
+    const std::vector<Watchable*>& content = s.getContent();
 
     // TODO: check if vector initializes all elements to default value
     std::vector<bool> watched(content.size());
@@ -146,7 +146,7 @@ Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
             continue;
         }
 
-        std::vector<std::string> watchableTags = watchable->getTags();
+        const std::vector<std::string> &watchableTags = watchable->getTags();
         std::string mostPopularTag = *std::max_element(watchableTags.begin(), watchableTags.end(), [&tagsPopularityMap](const std::string &a, const std::string &b) {
             if (tagsPopularityMap[a] == tagsPopularityMap[b]) {
                 return a < b;

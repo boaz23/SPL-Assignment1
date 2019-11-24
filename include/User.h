@@ -16,9 +16,9 @@ public:
     std::string getName() const;
     std::vector<Watchable*> get_history() const;
     static User* createUser(const std::string &name, const std::string &recommendationAlgorithm);
-    virtual User* createCopy(const std::string &name) const = 0; // TODO add to draw io
+    virtual User* createCopy(const std::string &name) const = 0;
     virtual User* clone() const = 0;
-    virtual void addToHistory(Watchable *watchable); // TODO add to draw io
+    virtual void addToHistory(Watchable *watchable);
 protected:
     std::vector<Watchable*> history;
 private:

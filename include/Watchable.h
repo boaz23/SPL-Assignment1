@@ -16,7 +16,7 @@ public:
     virtual Watchable* clone() const = 0;
     long getId() const;
     int getLength() const;
-    std::vector<std::string> getTags() const;
+    const std::vector<std::string>& getTags() const;
 private:
     const long id;
     int length;

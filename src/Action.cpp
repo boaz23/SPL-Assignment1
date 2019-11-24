@@ -26,9 +26,11 @@ void BaseAction::error(const std::string &errorMsg) {
     this->errorMsg = errorMsg;
 }
 
-// TODO: figure out how to print the action's error when it happens: figure out how to pass it to session or print in BaseAction
 /* Return the error message if there is one */
 std::string BaseAction::getErrorMsg() const {
+    return errorMsg;
+}
+const std::string& BaseAction::getErrMsg() const {
     return errorMsg;
 }
 
@@ -215,7 +217,6 @@ void PrintContentList::act(Session &sess) {
     } else {
         User *activeUser = sess.getActiveUser();
         std::vector<Watchable *> userHistory = activeUser->get_history();
-        std::vector<std::string> tagString;
 
         //In treading insert the size() to the for
         unsigned long historySize = userHistory.size();
@@ -226,7 +227,7 @@ void PrintContentList::act(Session &sess) {
                    tmpWachable.getLength());
 
             std::cout << "[";
-            tagString = tmpWachable.getTags();
+            const std::vector<std::string> &tagString = tmpWachable.getTags();
             for (unsigned long j = 0; j < tagString.size() - 1; j = j + 1) {
                 std::cout << tagString[j] << ",";
             }
@@ -300,7 +301,6 @@ void Watch::act(Session &sess) {
         error("Usage: watch <content_id>");
     } else {
         User &activeUser = *(sess.getActiveUser());
-        std::vector<Watchable *> content = sess.getContent();
 
         std::string::size_type sz;
         unsigned long contentId = -1;
@@ -310,13 +310,13 @@ void Watch::act(Session &sess) {
             error("The content id isn't valid");
         }
 
-        // TODO: call session.getContentById(contentId)
-        if(contentId >= 0 & contentId < content.size()) {
-            std::cout << "Watching " << content[contentId]->toString() << "\n";
-            activeUser.addToHistory(content[contentId]);
+        Watchable *watchable = sess.getContentById(contentId);
+        if(watchable) {
+            std::cout << "Watching " << watchable->toString() << "\n";
+            activeUser.addToHistory(watchable);
             complete();
 
-            watchRecommendation(sess, activeUser);
+            watchRecommendation(sess, watchable);
         }
     }
 }
@@ -330,13 +330,13 @@ std::string Watch::toString() const {
     }
 }
 
-// TODO: call Watchable.getNextWatchable(Session) instead
-void Watch::watchRecommendation(Session &sess, User &activeUser) {
-    bool watchNext = true;
-    Watchable *recommendation = activeUser.getRecommendation(sess);
-    std::string input;
+void Watch::watchRecommendation(Session &sess, Watchable *watchable) {
+    Watchable *recommendation = watchable->getNextWatchable(sess);
+    if (!recommendation) {
+        return;
+    }
 
-    // TODO: add null check (because there might be nothing recommended)
+    std::string input;
     std::cout << "We recommend watching " << recommendation->toString() << ", continue watching? [y/n]\n";
     std::cin >> input;
     if(input.size() == 1){
@@ -350,7 +350,6 @@ void Watch::watchRecommendation(Session &sess, User &activeUser) {
             sess.addToActionLog( watchRec);
             watchRec.act(sess);
         } else if (input[0] == 'x') {
-            watchNext = false;
         } else {
             error("invalid input");
         }
@@ -376,7 +375,7 @@ void PrintActionsLog::act(Session &sess) {
     if(!vArgs.empty()) {
         error("Usage: log");
     } else {
-        std::vector<BaseAction*> actions = sess.getActionLog();
+         const std::vector<BaseAction*>& actions = sess.getActionLog();
 
         for(unsigned long i=0; i < actions.size(); i= i + 1){
             std::cout << actions[i]->toString() << " " << actions[i]->getStatus() << "\n";

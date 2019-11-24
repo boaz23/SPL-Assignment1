@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include "../include/Watchable.h"
 
 
 class Session;
@@ -25,6 +26,7 @@ public:
     const std::vector<std::string>& getArgs();
     virtual BaseAction* clone() = 0;
     virtual void copyData(BaseAction& copyTo);
+    const std::string& getErrMsg() const;
 protected:
 	void complete();
 	void error(const std::string& errorMsg);
@@ -85,7 +87,7 @@ public:
 	virtual std::string toString() const;
 	virtual BaseAction* clone() ;
 private:
-    virtual void watchRecommendation(Session &sess, User &activeUser);
+    virtual void watchRecommendation(Session &sess, Watchable *watchable);
 
 };
 

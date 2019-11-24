@@ -134,14 +134,17 @@ void Session::start() {
         actionsLog.push_back(action);
         action->setArgs(words);
         action->act(*this);
+        if (action->getStatus() == ActionStatus::ERROR) {
+            cout << "Error - " << action->getErrMsg() << endl;
+        }
     }
     exitFlag = false;
 }
 
-vector<Watchable*> Session::getContent() const {
+const vector<Watchable*>& Session::getContent() const {
     return content;
 }
-vector<BaseAction*> Session::getActionLog() const {
+const vector<BaseAction*>& Session::getActionLog() const {
     return actionsLog;
 }
 
@@ -218,7 +221,7 @@ void Session::initializeFromConfig(const nlohmann::json &jsonCfg) {
 
     for (size_t i = 0; i < tvSerieses.size(); ++i) {
         TvSeries& tvSeries = *tvSerieses[i];
-        vector<int> seasons = tvSeries.getSeasons();
+        const vector<int>& seasons = tvSeries.getSeasons();
         Episode* lastEpisode = nullptr;
         for (size_t season = 0; season < seasons.size(); ++season) {
             int episodeCount = seasons[season];
