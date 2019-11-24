@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "../include/User.h"
 #include "../include/Watchable.h"
+#include <stdlib.h>
 
 //region User
 User::User(const std::string &name): name(name), history(){
@@ -40,43 +41,43 @@ User *User::createUser(const std::string &name, const std::string &recommendatio
 }
 //endregion
 
-LengthRecommenderUser::LengthRecommenderUser(const std::string& name): User(name), totalWatchTime(0), watchedAll(false),
-                                                                        avarage(0), historySize(0), contentNotWatched(){
+LengthRecommenderUser::LengthRecommenderUser(const std::string& name): User(name){
 }
 
 // TODO: test
 Watchable *LengthRecommenderUser::getRecommendation(Session &s) {
-    // Create the vector for content that wasnt watch yed
-    if(contentNotWatched.empty() && watchedAll == false){
-        delete(&contentNotWatched);
-        contentNotWatched = s.getContent();
-    }
+    int avarage = 0;
+    unsigned long sum = 0;
 
-    unsigned long recIndex = 0;
-    int best;
+    std::vector<Watchable*> content = s.getContent();
+    if(!history.empty()) {
+        std::vector<bool> watched(content.size());
+        for (unsigned long i = 0; i < watched.size(); i = i + 1) {
+            watched[i] = false;
+        }
 
-    if(!contentNotWatched.empty()) {
-        best = avarage - contentNotWatched[0].getLenght();
-        for (int i = 1; i < contentNotWatched.size(); i = i + 1) {
-            if (avarage - contentNotWatched[i].getLenght() < best) {
-                best = avarage - contentNotWatched[i].getLenght();
+        for (unsigned long i = 0; i < history.size(); i = i + 1) {
+            watched[history[i]->getId()] = true;
+            sum = sum + history[i]->getLength();
+        }
+
+        avarage = int(sum / history.size());
+        unsigned long recIndex = 0;
+        int recVal = abs(avarage - history[0]->getLength());
+        for (unsigned long i = 1; i < history.size(); i = i + 1) {
+            if(abs(avarage - history[i]->getLength()) < recVal){
                 recIndex = i;
+                recVal = abs(avarage - history[i]->getLength());
             }
         }
 
-        return contentNotWatched[recIndex];
+        return history[recIndex];
     }
 
     return nullptr;
 }
 
 void LengthRecommenderUser::addToHistory(Watchable *watchable) {
-    User::addToHistory(watchable);
-    // TODO remove the watchable from the cotentNotWatched
-
-    totalWatchTime = totalWatchTime + watchable->getLength();
-    avarage = (int)(totalWatchTime / history.size());
-    historySize = historySize + 1;
 }
 
 User *LengthRecommenderUser::createCopy(const std::string &name) const {
