@@ -152,7 +152,7 @@ void Session::addToActionLog(BaseAction &action) {
     actionsLog.push_back(&action);
 }
 
-Watchable* Session::getContentById(long id) {
+Watchable* Session::getContentById(size_t id) {
     if (id < 0 || id >= content.size()) {
         return nullptr;
     }

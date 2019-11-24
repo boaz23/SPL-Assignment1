@@ -9,7 +9,7 @@
 #include "../include/Session.h"
 
 //region User
-User::User(const std::string &name): name(name), history(){
+User::User(const std::string &name): history(), name(name) {
 
 }
 
@@ -109,7 +109,8 @@ Watchable* RerunRecommenderUser::getRecommendation(Session &s) {
         return nullptr;
     }
 
-    historyIndex = (++historyIndex) % history.size();
+    ++historyIndex;
+    historyIndex = historyIndex % history.size();
     return history[historyIndex];
 }
 

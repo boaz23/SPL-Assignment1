@@ -18,7 +18,7 @@ public:
     void start();
     const std::vector<Watchable*>& getContent() const;
     const std::vector<BaseAction*>& getActionLog() const;
-    Watchable* getContentById(long id);
+    Watchable* getContentById(size_t id);
     void addToActionLog(BaseAction &action);
     User* getActiveUser() const;
     User* getUser(const std::string &name);

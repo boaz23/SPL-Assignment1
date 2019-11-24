@@ -5,9 +5,9 @@ LFLAGS  = -L/usr/lib
 
 
 # Executable "hello" depends on the files hello.o and run.o.
-hello: bin/Main.o bin/Watchable.o bin/Movie.o bin/Episode.o bin/TvSeries.o bin/ConfigMovieReader.o bin/ConfigSeriesReader.o bin/Session.o bin/User.o bin/ActionFactory.o
+hello: bin/Main.o bin/Watchable.o bin/Movie.o bin/Episode.o bin/TvSeries.o bin/ConfigMovieReader.o bin/ConfigSeriesReader.o bin/Session.o bin/User.o bin/ActionFactory.o bin/Action.o bin/User.o
 	@echo 'Linking...'
-	$(CC) -o bin/splflix bin/Main.o bin/Watchable.o bin/Movie.o bin/Episode.o bin/TvSeries.o bin/ConfigMovieReader.o bin/ConfigSeriesReader.o bin/Session.o bin/User.o bin/ActionFactory.o $(LFLAGS)
+	$(CC) -o bin/splflix bin/Main.o bin/Watchable.o bin/Movie.o bin/Episode.o bin/TvSeries.o bin/ConfigMovieReader.o bin/ConfigSeriesReader.o bin/Session.o bin/ActionFactory.o bin/Action.o bin/User.o $(LFLAGS)
 
 # Object code (*.o file) depends on the source and header files
 bin/Main.o: src/Main.cpp
@@ -35,12 +35,15 @@ bin/ConfigSeriesReader.o: include/ConfigSeriesReader.h src/ConfigSeriesReader.cp
 bin/Session.o: include/Session.h src/Session.cpp
 	$(CC) $(CFLAGS) -c -Iinclude -o bin/Session.o src/Session.cpp
 
-bin/User.o: include/User.h src/User.cpp
-	$(CC) $(CFLAGS) -c -Iinclude -o bin/User.o src/User.cpp
-
 bin/ActionFactory.o: include/ActionFactory.h src/ActionFactory.cpp
 	$(CC) $(CFLAGS) -c -Iinclude -o bin/ActionFactory.o src/ActionFactory.cpp
 
+bin/Action.o: include/Action.h src/Action.cpp
+	$(CC) $(CFLAGS) -c -Iinclude -o bin/Action.o src/Action.cpp
+
+bin/User.o: include/User.h src/User.cpp
+	$(CC) $(CFLAGS) -c -Iinclude -o bin/User.o src/User.cpp
+
 #Clean the build directory
 clean: 
-	rm -f bin/*
+	rm -f bin/*.o splflix

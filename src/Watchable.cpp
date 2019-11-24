@@ -9,6 +9,6 @@ long Watchable::getId() const {
 int Watchable::getLength() const {
     return length;
 }
-std::vector<std::string> Watchable::getTags() const {
+const std::vector<std::string>& Watchable::getTags() const {
     return tags;
 }
