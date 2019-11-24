@@ -108,7 +108,8 @@ Watchable* RerunRecommenderUser::getRecommendation(Session &s) {
         return nullptr;
     }
 
-    return history[(++historyIndex) % history.size()];
+    historyIndex = (++historyIndex) % history.size();
+    return history[historyIndex];
 }
 
 GenreRecommenderUser::GenreRecommenderUser(const std::string &name) : User(name) { }
