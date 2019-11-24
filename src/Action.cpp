@@ -26,6 +26,7 @@ void BaseAction::error(const std::string &errorMsg) {
     this->errorMsg = errorMsg;
 }
 
+// TODO: figure out how to print the action's error when it happens: figure out how to pass it to session or print in BaseAction
 /* Return the error message if there is one */
 std::string BaseAction::getErrorMsg() const {
     return errorMsg;
