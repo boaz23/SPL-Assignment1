@@ -170,28 +170,37 @@ User* Session::getUser(const string &name) {
 
     return userMap[name];
 }
-bool Session::addUser(User &user) {
-    if (userMap.count(user.getName()) > 0) {
+bool Session::addUser(User *user) {
+    if (!user) {
+        return false;
+    }
+    if (userMap.count(user->getName()) > 0) {
         return false;
     }
 
-    userMap[user.getName()] = &user;
+    userMap[user->getName()] = user;
     return true;
 }
-bool Session::changeActiveUser(User &user) {
-    if (userMap.count(user.getName()) == 0) {
+bool Session::changeActiveUser(User *user) {
+    if (!user) {
+        return false;
+    }
+    if (userMap.count(user->getName()) == 0) {
         return false;
     }
 
-    activeUser = &user;
+    activeUser = user;
     return true;
 }
-bool Session::removeUser(User &user) {
-    if (userMap.count(user.getName()) == 0) {
+bool Session::removeUser(User *user) {
+    if (!user) {
+        return false;
+    }
+    if (userMap.count(user->getName()) == 0) {
         return false;
     }
 
-    userMap.erase(user.getName());
+    userMap.erase(user->getName());
     return true;
 }
 

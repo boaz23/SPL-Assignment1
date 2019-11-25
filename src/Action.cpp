@@ -71,7 +71,7 @@ void CreateUser::act(Session &sess) {
             if(newUser == nullptr){
                 error("recommendation algorithm code is not valid");
             } else {
-                sess.addUser(*newUser);
+                sess.addUser(newUser);
                 complete();
             }
         } else {
@@ -106,7 +106,7 @@ void ChangeActiveUser::act(Session &sess) {
     if(vArgs.size() != 1){
         error("Usage: changeuser <user_name>");
     } else {
-        if(sess.changeActiveUser(*sess.getUser(vArgs[0]))){
+        if(sess.changeActiveUser(sess.getUser(vArgs[0]))){
             complete();
         } else {
             error("the user name doesnt exists");
@@ -139,7 +139,7 @@ void DeleteUser::act(Session &sess) {
     if(vArgs.size() != 1){
         error("Usage: deleteuser <user_name>");
     } else {
-        if(sess.removeUser(*sess.getUser(vArgs[0]))){
+        if(sess.removeUser(sess.getUser(vArgs[0]))){
             complete();
 
         } else {
@@ -178,7 +178,7 @@ void DuplicateUser::act(Session &sess) {
         if(toDuplicate != nullptr){
                 if(sess.getUser(vArgs[1]) == nullptr) {
                     User* duplicatedUser = toDuplicate->createCopy(vArgs[1]);
-                    sess.addUser(*duplicatedUser);
+                    sess.addUser(duplicatedUser);
                     complete();
                 } else {
                     error("the duplicated user name is already taken");

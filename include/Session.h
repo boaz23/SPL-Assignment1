@@ -22,9 +22,9 @@ public:
     void addToActionLog(BaseAction &action);
     User* getActiveUser() const;
     User* getUser(const std::string &name);
-    bool addUser(User &user);
-    bool changeActiveUser(User &user);
-    bool removeUser(User &user);
+    bool addUser(User *user);
+    bool changeActiveUser(User *user);
+    bool removeUser(User *user);
     void raiseExistFlag();
 
     Session(const Session &other);
