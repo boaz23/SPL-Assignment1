@@ -14,7 +14,6 @@ enum ActionStatus{
 	PENDING, COMPLETED, ERROR
 };
 
-
 class BaseAction{
 public:
 	BaseAction();
@@ -27,11 +26,13 @@ public:
     virtual BaseAction* clone() = 0;
     virtual void copyData(BaseAction& copyTo);
     const std::string& getErrMsg() const;
+    static const std::string& getStatusName(ActionStatus status);
 protected:
 	void complete();
 	void error(const std::string& errorMsg);
 	std::string getErrorMsg() const;
 private:
+    static std::string statusesNames[];
 	std::string errorMsg;
 	ActionStatus status;
     std::vector<std::string> args;
