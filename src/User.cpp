@@ -47,35 +47,39 @@ LengthRecommenderUser::LengthRecommenderUser(const std::string& name): User(name
 
 // TODO: test
 Watchable *LengthRecommenderUser::getRecommendation(Session &s) {
-    int avarage = 0;
-    unsigned long sum = 0;
-
     const std::vector<Watchable*>& content = s.getContent();
     if(!history.empty()) {
         std::vector<bool> watched(content.size());
-        for (unsigned long i = 0; i < watched.size(); i = i + 1) {
+        for (size_t i = 0; i < watched.size(); i = i + 1) {
             watched[i] = false;
         }
 
-        for (unsigned long i = 0; i < history.size(); i = i + 1) {
+        unsigned long sum = 0;
+        for (size_t i = 0; i < history.size(); i = i + 1) {
             watched[history[i]->getId()] = true;
             sum = sum + history[i]->getLength();
         }
 
-        avarage = int(sum / history.size());
-        unsigned long recIndex = 0;
-        int recVal = abs(avarage - content[0]->getLength());
-        for (unsigned long i = 1; i < content.size(); i = i + 1) {
-            if (watched[content[i]->getId()]) {
+        double avarage = double((double)sum / history.size());
+        size_t recIndex = -1;
+        double recVal = INFINITY;
+        for (size_t i = 0; i < content.size(); i = i + 1) {
+            Watchable *watchable = content[i];
+            if (watched[watchable->getId()]) {
                 continue;
             }
-            if(abs(avarage - content[i]->getLength()) < recVal){
+
+            double dist = abs(avarage - watchable->getLength());
+            if(dist < recVal){
                 recIndex = i;
-                recVal = abs(avarage - content[i]->getLength());
+                recVal = dist;
             }
         }
 
-        return history[recIndex];
+        if (recIndex < 0) {
+            return nullptr;
+        }
+        return content[recIndex];
     }
 
     return nullptr;

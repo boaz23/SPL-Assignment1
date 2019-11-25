@@ -338,7 +338,7 @@ void Watch::watchRecommendation(Session &sess, Watchable *watchable) {
 
     std::string input;
     std::cout << "We recommend watching " << recommendation->toString() << ", continue watching? [y/n]\n";
-    std::cin >> input;
+    getline(std::cin, input);
     if(input.size() == 1){
         if(input[0] == 'y'){
             BaseAction &watchRec = *(new Watch());
