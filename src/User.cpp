@@ -61,6 +61,7 @@ Watchable *LengthRecommenderUser::getRecommendation(Session &s) {
         }
 
         double avarage = double((double)sum / history.size());
+        bool found = false;
         size_t recIndex = -1;
         double recVal = INFINITY;
         for (size_t i = 0; i < content.size(); i = i + 1) {
@@ -71,12 +72,13 @@ Watchable *LengthRecommenderUser::getRecommendation(Session &s) {
 
             double dist = abs(avarage - watchable->getLength());
             if(dist < recVal){
+                found = true;
                 recIndex = i;
                 recVal = dist;
             }
         }
 
-        if (recIndex < 0) {
+        if (!found) {
             return nullptr;
         }
         return content[recIndex];

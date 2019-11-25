@@ -1,0 +1,32 @@
+{
+  "movies": [
+    {
+      "name" : "Scott Pilgrim vs. the World",
+      "length": 112,
+      "tags": ["Action", "Comedy", "Fantasy", "Romance"
+      ]
+    },
+    {
+      "name" : "Finding Nemo",
+      "length": 100,
+      "tags": ["Animation",
+               "Adventure","Family","Sea"
+      ]
+    }
+  ],
+  "tv_series":
+  [
+    {
+      "name": "The End of the F***ing World ",
+      "episode_length": 25,
+      "seasons": [1],
+      "tags": ["Comedy", "Crime", "Drama"]
+    },
+    {
+      "name": "Blue Planet II",
+      "episode_length": 45,
+      "seasons": [2],
+      "tags": ["Documentary", "Sea"]
+    }
+  ]
+}
