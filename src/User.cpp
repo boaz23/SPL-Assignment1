@@ -144,7 +144,7 @@ Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
         }
     }
 
-    std::vector<std::tuple<Watchable*, std::string, int, int>> candidates(content.size());
+    std::vector<std::tuple<Watchable*, std::string, int, int>> candidates;
     for (size_t i = 0; i < content.size(); ++i) {
         Watchable *watchable = content[i];
         if (watched[watchable->getId()]) {
@@ -154,21 +154,21 @@ Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
         const std::vector<std::string> &watchableTags = watchable->getTags();
         std::string mostPopularTag = *std::max_element(watchableTags.begin(), watchableTags.end(), [&tagsPopularityMap](const std::string &a, const std::string &b) {
             if (tagsPopularityMap[a] == tagsPopularityMap[b]) {
-                return a < b;
+                return a > b;
             }
 
             return tagsPopularityMap[a] < tagsPopularityMap[b];
         });
-        candidates[i] = std::make_tuple(content[i], mostPopularTag, tagsPopularityMap[mostPopularTag], i);
+        candidates.emplace_back(content[i], mostPopularTag, tagsPopularityMap[mostPopularTag], i);
     }
 
     std::sort(candidates.begin(), candidates.end(), [](const std::tuple<Watchable*, std::string, int, int> &a, const std::tuple<Watchable*, std::string, int, int> &b) {
         if (std::get<2>(a) == std::get<2>(b)) {
             if (std::get<1>(a) == std::get<1>(b)) {
-                return std::get<3>(a) < std::get<3>(b);
+                return std::get<3>(a) > std::get<3>(b);
             }
 
-            return std::get<1>(a) < std::get<1>(b);
+            return std::get<1>(a) > std::get<1>(b);
         }
 
         return std::get<2>(a) < std::get<2>(b);

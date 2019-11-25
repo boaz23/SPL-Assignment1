@@ -306,9 +306,9 @@ void Watch::act(Session &sess) {
         User &activeUser = *(sess.getActiveUser());
 
         std::string::size_type sz;
-        unsigned long contentId = -1;
+        size_t contentId = -1;
         try {
-            contentId = std::stoi(vArgs[0], &sz);
+            contentId = std::stoi(vArgs[0], &sz) - 1;
         } catch (std::exception &e) {
             error("The content id isn't valid");
         }
@@ -320,6 +320,9 @@ void Watch::act(Session &sess) {
             complete();
 
             watchRecommendation(sess, watchable);
+        }
+        else {
+            error("content with the specified id does not exists");
         }
     }
 }
@@ -347,7 +350,7 @@ void Watch::watchRecommendation(Session &sess, Watchable *watchable) {
             BaseAction &watchRec = *(new Watch());
 
             std::vector<std::string> arg;
-            arg.push_back(std::to_string(recommendation->getId()));
+            arg.push_back(std::to_string(recommendation->getId() + 1));
             watchRec.setArgs(arg);
 
             sess.addToActionLog(watchRec);

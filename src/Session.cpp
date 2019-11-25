@@ -201,6 +201,7 @@ bool Session::removeUser(User *user) {
     }
 
     userMap.erase(user->getName());
+    delete user;
     return true;
 }
 

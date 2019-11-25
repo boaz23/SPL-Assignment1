@@ -12,12 +12,13 @@ Episode::Episode(long id, const string &seriesName, int length, int season, int 
                  nextEpisodeId(-1) {}
 
 string Episode::toString() const {
-    return seriesName + "S" + paddNumber(season) + "E" + paddNumber(episode);
+    return seriesName + " S" + to_string(season) + "E" + to_string(episode);
 }
 
 Watchable* Episode::getNextWatchable(Session &session) const {
-    if (nextEpisodeId >= 0) {
-        return session.getContentById(nextEpisodeId);
+    Watchable *recommendation = session.getContentById(nextEpisodeId);
+    if (recommendation) {
+        return recommendation;
     }
 
     return session.getActiveUser()->getRecommendation(session);
