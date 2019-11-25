@@ -117,6 +117,14 @@ void Session::start() {
     while (!exitFlag) {
         string command;
         getline(cin, command);
+        if (cin.eof()) {
+            break;
+        }
+        else if (cin.fail()) {
+            cerr << "an unexpected error occured, input couldn't be interpreted";
+            break;
+        }
+
         vector<string> words = splitStringBySpace(command);
         if (words.empty()) {
             cout << "Error - no command entered" << endl;
