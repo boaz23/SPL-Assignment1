@@ -254,5 +254,5 @@ void Session::initializeFromConfig(const nlohmann::json &jsonCfg) {
 
 vector<string> Session::splitStringBySpace(string str) {
     istringstream iss(str);
-    return vector<string>(istream_iterator<string>(iss),istream_iterator<string>());
+    return std::move(vector<string>(istream_iterator<string>(iss),istream_iterator<string>()));
 }

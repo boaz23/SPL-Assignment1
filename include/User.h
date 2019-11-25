@@ -33,7 +33,6 @@ public:
     virtual Watchable* getRecommendation(Session& s);
     virtual User* clone() const;
     virtual User* createCopy(const std::string &name) const;
-    virtual void addToHistory(Watchable *watchable);
 private:
 };
 

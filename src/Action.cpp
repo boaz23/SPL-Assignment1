@@ -345,11 +345,11 @@ void Watch::watchRecommendation(Session &sess, Watchable *watchable) {
 
             std::vector<std::string> arg;
             arg.push_back(std::to_string(recommendation->getId()));
-            setArgs(arg);
+            watchRec.setArgs(arg);
 
             sess.addToActionLog( watchRec);
             watchRec.act(sess);
-        } else if (input[0] == 'x') {
+        } else if (input[0] == 'n') {
         } else {
             error("invalid input");
         }

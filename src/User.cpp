@@ -30,11 +30,11 @@ void User::addToHistory(Watchable *watchable) {
 }
 
 User *User::createUser(const std::string &name, const std::string &recommendationAlgorithm) {
-    if(recommendationAlgorithm.compare("len") == 0){
+    if(recommendationAlgorithm == "len"){
         return new LengthRecommenderUser(name);
-    } else if(recommendationAlgorithm.compare("rer")){
+    } else if(recommendationAlgorithm == "rer"){
         return new RerunRecommenderUser(name);
-    } else if(recommendationAlgorithm.compare("gen")){
+    } else if (recommendationAlgorithm == "gen"){
         return new GenreRecommenderUser(name);
     } else {
         return nullptr;
@@ -64,11 +64,14 @@ Watchable *LengthRecommenderUser::getRecommendation(Session &s) {
 
         avarage = int(sum / history.size());
         unsigned long recIndex = 0;
-        int recVal = abs(avarage - history[0]->getLength());
-        for (unsigned long i = 1; i < history.size(); i = i + 1) {
-            if(abs(avarage - history[i]->getLength()) < recVal){
+        int recVal = abs(avarage - content[0]->getLength());
+        for (unsigned long i = 1; i < content.size(); i = i + 1) {
+            if (watched[content[i]->getId()]) {
+                continue;
+            }
+            if(abs(avarage - content[i]->getLength()) < recVal){
                 recIndex = i;
-                recVal = abs(avarage - history[i]->getLength());
+                recVal = abs(avarage - content[i]->getLength());
             }
         }
 
@@ -76,9 +79,6 @@ Watchable *LengthRecommenderUser::getRecommendation(Session &s) {
     }
 
     return nullptr;
-}
-
-void LengthRecommenderUser::addToHistory(Watchable *watchable) {
 }
 
 User *LengthRecommenderUser::createCopy(const std::string &name) const {
