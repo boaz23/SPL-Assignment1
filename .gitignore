@@ -40,3 +40,4 @@ bin/*
 .idea/workspace.xml
 src/test.cpp
 include/test.h
+.directory
