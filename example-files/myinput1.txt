@@ -1,0 +1,21 @@
+createuser boaz gen
+changeuser boaz
+watch 7
+y
+y
+y
+y
+n
+watch 2
+n
+watchhist
+log
+content
+dupuser boaz boaz2
+watchhist
+changeuser boaz2
+watchhist
+deleteuser boaz
+watchhist
+log
+exit
