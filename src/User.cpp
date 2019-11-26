@@ -13,8 +13,6 @@ User::User(const std::string &name): history(), name(name) {
 
 }
 
-User::~User() = default;
-
 std::string User::getName() const {
     return name;
 }
@@ -25,7 +23,7 @@ std::vector<Watchable *> User::get_history() const {
 
 void User::addToHistory(Watchable *watchable) {
     if(watchable != nullptr){
-        history.push_back(watchable);
+        history.push_back(watchable->clone());
     }
 }
 
@@ -40,12 +38,56 @@ User *User::createUser(const std::string &name, const std::string &recommendatio
         return nullptr;
     }
 }
+
+User::~User() {
+    clean();
+};
+
+User::User(const User &other) : history() {
+    copy(other);
+}
+
+User::User(User &&rval) : history() {
+    steal(rval);
+}
+
+User& User::operator=(const User &other) {
+    if (&other != this) {
+        clean();
+        copy(other);
+    }
+    return *this;
+}
+User& User::operator=(User &&rval) {
+    if (&rval != this) {
+        clean();
+        steal(rval);
+    }
+    return *this;
+}
+
+void User::clean() {
+    for (auto &watchable : history) {
+        delete watchable;
+        watchable = nullptr;
+    }
+}
+
+void User::copy(const User &other) {
+    history = std::vector<Watchable*>();
+    for (auto pWatchable : other.history) {
+        history.push_back(pWatchable->clone());
+    }
+}
+
+void User::steal(User &other) {
+    history = std::move(other.history);
+}
 //endregion
 
 LengthRecommenderUser::LengthRecommenderUser(const std::string& name): User(name){
 }
 
-// TODO: test
 Watchable *LengthRecommenderUser::getRecommendation(Session &s) {
     const std::vector<Watchable*>& content = s.getContent();
     if(!history.empty()) {
@@ -89,13 +131,28 @@ Watchable *LengthRecommenderUser::getRecommendation(Session &s) {
 
 User *LengthRecommenderUser::createCopy(const std::string &name) const {
     LengthRecommenderUser *newUser = new LengthRecommenderUser(name);
-    // TODO: check it actually copies rather than moves
     newUser->history = history;
     return  newUser;
 }
 
 User *LengthRecommenderUser::clone() const {
     return createCopy(getName());
+}
+
+LengthRecommenderUser::~LengthRecommenderUser() = default;
+LengthRecommenderUser::LengthRecommenderUser(const LengthRecommenderUser &other) : User(other) {}
+LengthRecommenderUser::LengthRecommenderUser(LengthRecommenderUser &&rval) : User(std::move(rval)) {}
+LengthRecommenderUser& LengthRecommenderUser::operator=(const LengthRecommenderUser &other) {
+    if (&other != this) {
+        this->User::operator=(other);
+    }
+    return *this;
+}
+LengthRecommenderUser& LengthRecommenderUser::operator=(LengthRecommenderUser &&rval) {
+    if (&rval != this) {
+        this->User::operator=(std::move(rval));
+    }
+    return *this;
 }
 
 RerunRecommenderUser::RerunRecommenderUser(const std::string &name) : User(name), historyIndex(-1) {}
@@ -120,6 +177,22 @@ Watchable* RerunRecommenderUser::getRecommendation(Session &s) {
     return history[historyIndex];
 }
 
+RerunRecommenderUser::~RerunRecommenderUser() = default;
+RerunRecommenderUser::RerunRecommenderUser(const RerunRecommenderUser &other) : User(other) {}
+RerunRecommenderUser::RerunRecommenderUser(RerunRecommenderUser &&rval) : User(std::move(rval)) {}
+RerunRecommenderUser& RerunRecommenderUser::operator=(const RerunRecommenderUser &other) {
+    if (&other != this) {
+        this->User::operator=(other);
+    }
+    return *this;
+}
+RerunRecommenderUser& RerunRecommenderUser::operator=(RerunRecommenderUser &&rval) {
+    if (&rval != this) {
+        this->User::operator=(std::move(rval));
+    }
+    return *this;
+}
+
 GenreRecommenderUser::GenreRecommenderUser(const std::string &name) : User(name) { }
 
 User* GenreRecommenderUser::createCopy(const std::string &name) const {
@@ -132,11 +205,9 @@ User* GenreRecommenderUser::clone() const {
     return createCopy(getName());
 }
 
-// TODO: test
 Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
     const std::vector<Watchable*>& content = s.getContent();
 
-    // TODO: check if vector initializes all elements to default value
     std::vector<bool> watched(content.size());
     std::unordered_map<std::string, int> tagsPopularityMap;
     for (const auto &watchable : history) {
@@ -180,4 +251,20 @@ Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
         return nullptr;
     }
     return std::get<0>(candidates[candidates.size() - 1]);
+}
+
+GenreRecommenderUser::~GenreRecommenderUser() = default;
+GenreRecommenderUser::GenreRecommenderUser(const GenreRecommenderUser &other) : User(other) {}
+GenreRecommenderUser::GenreRecommenderUser(GenreRecommenderUser &&rval) : User(std::move(rval)) {}
+GenreRecommenderUser& GenreRecommenderUser::operator=(const GenreRecommenderUser &other) {
+    if (&other != this) {
+        this->User::operator=(other);
+    }
+    return *this;
+}
+GenreRecommenderUser& GenreRecommenderUser::operator=(GenreRecommenderUser &&rval) {
+    if (&rval != this) {
+        this->User::operator=(std::move(rval));
+    }
+    return *this;
 }

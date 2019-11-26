@@ -9,8 +9,6 @@
 using namespace std;
 using json = nlohmann::json;
 
-// TODO:: Test move/copy assignments/constructors when merged with working code
-
 void Session::clean() {
     for (auto &watchable : content) {
         delete watchable;
@@ -93,14 +91,20 @@ Session& Session::operator=(Session &&rval) {
 
 Session::Session(const string &configFilePath) : content(), actionsLog(), userMap(), activeUser(nullptr), exitFlag(false), actionsFactory() {
     initializeFromConfig(configFilePath);
-    
+    initializeDefault();
+    initializeActionsFactory();
+}
+
+void Session::initializeDefault() {
     cout << "SPLFLIX is now on!" << endl;
     if (userMap.count(DEFAULT_USER_NAME) == 0) {
         User* pUser = new LengthRecommenderUser(DEFAULT_USER_NAME);
         userMap[pUser->getName()] = pUser;
         activeUser = pUser;
     }
+}
 
+void Session::initializeActionsFactory() {
     actionsFactory["createuser"] = new CreateUserActionFactory();
     actionsFactory["changeuser"] = new ChangeActiveUserActionFactory();
     actionsFactory["deleteuser"] = new DeleteUserActionFactory();
@@ -117,12 +121,14 @@ void Session::start() {
     while (!exitFlag) {
         string command;
         getline(cin, command);
-        if (cin.eof()) {
-            break;
-        }
-        else if (cin.fail()) {
-            cerr << "an unexpected error occured, input couldn't be interpreted";
-            break;
+        if (command.empty()) {
+            if (cin.eof()) {
+                break;
+            }
+            else if (cin.fail()) {
+                cerr << "an unexpected error occured, input couldn't be interpreted";
+                break;
+            }
         }
 
         vector<string> words = splitStringBySpace(command);
@@ -132,21 +138,25 @@ void Session::start() {
         }
 
         string actionCmd = words[0];
+        words.erase(words.begin());
         if (actionsFactory.count(actionCmd) == 0) {
             cout << "Error - unknown action entered" << endl;
             continue;
         }
 
-        words.erase(words.begin());
-        BaseAction* action = actionsFactory[actionCmd]->createAction();
-        actionsLog.push_back(action);
-        action->setArgs(words);
-        action->act(*this);
-        if (action->getStatus() == ActionStatus::ERROR) {
-            cout << "Error - " << action->getErrMsg() << endl;
-        }
+        invokeAction(words, actionCmd);
     }
     exitFlag = false;
+}
+
+void Session::invokeAction(const vector<string> &words, const string &actionCmd) {
+    BaseAction* action = actionsFactory[actionCmd]->createAction();
+    actionsLog.push_back(action);
+    action->setArgs(words);
+    action->act(*this);
+    if (action->getStatus() == ERROR) {
+        cout << "Error - " << action->getErrMsg() << endl;
+    }
 }
 
 const vector<Watchable*>& Session::getContent() const {
@@ -225,18 +235,12 @@ void Session::initializeFromConfig(const std::string &configFilePath) {
 }
 void Session::initializeFromConfig(const nlohmann::json &jsonCfg) {
     long watchableId = -1;
+    readMovies(jsonCfg, watchableId);
+    vector<unique_ptr<TvSeries>> tvSerieses = readTvSerieses(jsonCfg);
+    createEpisodes(watchableId, tvSerieses);
+}
 
-    ConfigMovieReader mvReader(jsonCfg["movies"]);
-    for (int i = 0; i < mvReader.getMoviesCount(); ++i) {
-        content.push_back(mvReader.readMovie(i, ++watchableId));
-    }
-
-    vector<unique_ptr<TvSeries>> tvSerieses;
-    ConfigSeriesReader srsReader(jsonCfg["tv_series"]);
-    for (int i = 0; i < srsReader.getSeriesCount(); ++i) {
-        tvSerieses.push_back(srsReader.readSeries(i));
-    }
-
+void Session::createEpisodes(long watchableId, const vector<unique_ptr<TvSeries>> &tvSerieses) {
     for (size_t i = 0; i < tvSerieses.size(); ++i) {
         TvSeries& tvSeries = *tvSerieses[i];
         const vector<int>& seasons = tvSeries.getSeasons();
@@ -257,7 +261,26 @@ void Session::initializeFromConfig(const nlohmann::json &jsonCfg) {
                 content.push_back(pEpisode);
             }
         }
-        lastEpisode->setNextEpisodeId(-1);
+        if (lastEpisode) {
+            lastEpisode->setNextEpisodeId(-1);
+        }
+    }
+}
+
+vector<unique_ptr<TvSeries>> Session::readTvSerieses(const json &jsonCfg) const {
+    vector<unique_ptr<TvSeries>> tvSerieses;
+    ConfigSeriesReader srsReader(jsonCfg["tv_series"]);
+    for (int i = 0; i < srsReader.getSeriesCount(); ++i) {
+        tvSerieses.push_back(srsReader.readSeries(i));
+    }
+
+    return std::move(tvSerieses);
+}
+
+void Session::readMovies(const json &jsonCfg, long &watchableId) {
+    ConfigMovieReader mvReader(jsonCfg["movies"]);
+    for (int i = 0; i < mvReader.getMoviesCount(); ++i) {
+        content.push_back(mvReader.readMovie(i, ++watchableId));
     }
 }
 

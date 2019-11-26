@@ -7,6 +7,7 @@
 #include "Action.h"
 #include "ActionFactory.h"
 #include "json.hpp"
+#include "TvSeries.h"
 
 class User;
 class Watchable;
@@ -50,5 +51,17 @@ private:
     void initializeFromConfig(const nlohmann::json &jsonCfg);
 
     static std::vector<std::string> splitStringBySpace(std::string str);
+
+    void initializeActionsFactory();
+
+    void initializeDefault();
+
+    void invokeAction(const std::vector<std::string> &words, const std::string &actionCmd);
+
+    void readMovies(const nlohmann::basic_json<> &jsonCfg, long &watchableId);
+
+    std::vector<std::unique_ptr<TvSeries>> readTvSerieses(const nlohmann::basic_json<> &jsonCfg) const;
+
+    void createEpisodes(long watchableId, const std::vector<std::unique_ptr<TvSeries>> &tvSerieses);
 };
 #endif
