@@ -224,13 +224,13 @@ void PrintContentList::act(Session &sess) {
     } else {
         const std::vector<Watchable *> &content = sess.getContent();
         for (size_t i = 0; i < content.size(); i = i + 1) {
-            Watchable &wachable = *content[i];
+            Watchable &watchable = *content[i];
 
-            printf("%lu. %s %d minutes ", i + 1, wachable.toString().c_str(),
-                   wachable.getLength());
+            printf("%lu. %s %d minutes ", i + 1, watchable.toString().c_str(),
+                   watchable.getLength());
 
             std::cout << "[";
-            const std::vector<std::string> &tagString = wachable.getTags();
+            const std::vector<std::string> &tagString = watchable.getTags();
             for (size_t j = 0; j < tagString.size() - 1; j = j + 1) {
                 std::cout << tagString[j] << ", ";
             }

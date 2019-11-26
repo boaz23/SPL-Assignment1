@@ -133,12 +133,14 @@ Watchable *LengthRecommenderUser::getRecommendation(Session &s) {
 
 User *LengthRecommenderUser::createCopy(const std::string &name) const {
     LengthRecommenderUser *newUser = new LengthRecommenderUser(name);
-    newUser->history = history;
+    for (auto pWatchable : history) {
+        newUser->addToHistory(pWatchable);
+    }
     return  newUser;
 }
 
 User *LengthRecommenderUser::clone() const {
-    return createCopy(getName());
+    return new LengthRecommenderUser(*this);
 }
 
 LengthRecommenderUser::~LengthRecommenderUser() = default;
@@ -159,14 +161,16 @@ LengthRecommenderUser& LengthRecommenderUser::operator=(LengthRecommenderUser &&
 
 RerunRecommenderUser::RerunRecommenderUser(const std::string &name) : User(name), historyIndex(-1) {}
 
-User* RerunRecommenderUser::createCopy(const std::string &name) const {
-    RerunRecommenderUser *duplicate = new RerunRecommenderUser(name);
-    duplicate->history = history;
-    return duplicate;
+User *RerunRecommenderUser::createCopy(const std::string &name) const {
+    RerunRecommenderUser *newUser = new RerunRecommenderUser(name);
+    for (auto pWatchable : history) {
+        newUser->addToHistory(pWatchable);
+    }
+    return  newUser;
 }
 
-User* RerunRecommenderUser::clone() const {
-    return createCopy(getName());
+User *RerunRecommenderUser::clone() const {
+    return new RerunRecommenderUser(*this);
 }
 
 Watchable* RerunRecommenderUser::getRecommendation(Session &s) {
@@ -175,7 +179,6 @@ Watchable* RerunRecommenderUser::getRecommendation(Session &s) {
     }
 
     ++historyIndex;
-    historyIndex = historyIndex % history.size();
     return history[historyIndex];
 }
 
@@ -197,14 +200,16 @@ RerunRecommenderUser& RerunRecommenderUser::operator=(RerunRecommenderUser &&rva
 
 GenreRecommenderUser::GenreRecommenderUser(const std::string &name) : User(name) { }
 
-User* GenreRecommenderUser::createCopy(const std::string &name) const {
-    GenreRecommenderUser *duplicate = new GenreRecommenderUser(name);
-    duplicate->history = history;
-    return duplicate;
+User *GenreRecommenderUser::createCopy(const std::string &name) const {
+    GenreRecommenderUser *newUser = new GenreRecommenderUser(name);
+    for (auto pWatchable : history) {
+        newUser->addToHistory(pWatchable);
+    }
+    return  newUser;
 }
 
-User* GenreRecommenderUser::clone() const {
-    return createCopy(getName());
+User *GenreRecommenderUser::clone() const {
+    return new GenreRecommenderUser(*this);
 }
 
 Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
