@@ -43,11 +43,11 @@ User::~User() {
     clean();
 };
 
-User::User(const User &other) : history() {
+User::User(const User &other) : history(), name() {
     copy(other);
 }
 
-User::User(User &&rval) : history() {
+User::User(User &&rval) : history(), name() {
     steal(rval);
 }
 
@@ -74,6 +74,7 @@ void User::clean() {
 }
 
 void User::copy(const User &other) {
+    name = other.name;
     history = std::vector<Watchable*>();
     for (auto pWatchable : other.history) {
         history.push_back(pWatchable->clone());
@@ -82,6 +83,7 @@ void User::copy(const User &other) {
 
 void User::steal(User &other) {
     history = std::move(other.history);
+    name = std::move(other.name);
 }
 //endregion
 
@@ -178,8 +180,8 @@ Watchable* RerunRecommenderUser::getRecommendation(Session &s) {
 }
 
 RerunRecommenderUser::~RerunRecommenderUser() = default;
-RerunRecommenderUser::RerunRecommenderUser(const RerunRecommenderUser &other) : User(other) {}
-RerunRecommenderUser::RerunRecommenderUser(RerunRecommenderUser &&rval) : User(std::move(rval)) {}
+RerunRecommenderUser::RerunRecommenderUser(const RerunRecommenderUser &other) : User(other), historyIndex(-1) {}
+RerunRecommenderUser::RerunRecommenderUser(RerunRecommenderUser &&rval) : User(std::move(rval)), historyIndex(-1) {}
 RerunRecommenderUser& RerunRecommenderUser::operator=(const RerunRecommenderUser &other) {
     if (&other != this) {
         this->User::operator=(other);
