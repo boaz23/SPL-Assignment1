@@ -53,6 +53,7 @@ public:
     virtual User* createCopy(const std::string &name) const;
     virtual User* clone() const;
 private:
+    static std::string toLowerCase(const std::string &str);
 };
 
 #endif
