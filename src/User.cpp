@@ -213,7 +213,7 @@ Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
     for (const auto &watchable : history) {
         watched[watchable->getId()] = true;
         for (const auto &tag : watchable->getTags()) {
-            ++tagsPopularityMap[tag];
+            ++tagsPopularityMap[toLowerCase(tag)];
         }
     }
 
@@ -226,13 +226,16 @@ Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
 
         const std::vector<std::string> &watchableTags = watchable->getTags();
         std::string mostPopularTag = *std::max_element(watchableTags.begin(), watchableTags.end(), [&tagsPopularityMap](const std::string &a, const std::string &b) {
-            if (tagsPopularityMap[a] == tagsPopularityMap[b]) {
-                return a > b;
+            std::string lowercaseA = toLowerCase(a);
+            std::string lowercaseB = toLowerCase(b);
+            if (tagsPopularityMap[lowercaseA] == tagsPopularityMap[lowercaseB]) {
+                return lowercaseA > lowercaseB;
             }
 
-            return tagsPopularityMap[a] < tagsPopularityMap[b];
+            return tagsPopularityMap[lowercaseA] < tagsPopularityMap[lowercaseB];
         });
-        candidates.emplace_back(content[i], mostPopularTag, tagsPopularityMap[mostPopularTag], i);
+        std::string lowercaseTag = toLowerCase(mostPopularTag);
+        candidates.emplace_back(content[i], lowercaseTag, tagsPopularityMap[lowercaseTag], i);
     }
 
     std::sort(candidates.begin(), candidates.end(), [](const std::tuple<Watchable*, std::string, int, int> &a, const std::tuple<Watchable*, std::string, int, int> &b) {
@@ -251,6 +254,14 @@ Watchable* GenreRecommenderUser::getRecommendation(Session &s) {
         return nullptr;
     }
     return std::get<0>(candidates[candidates.size() - 1]);
+}
+
+std::string GenreRecommenderUser::toLowerCase(const std::string &str) {
+    std::string result(str);
+    for (char &i : result) {
+        i = (char)::tolower(i);
+    }
+    return std::move(result);
 }
 
 GenreRecommenderUser::~GenreRecommenderUser() = default;
