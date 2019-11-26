@@ -79,6 +79,7 @@ public:
     GenreRecommenderUser& operator=(const GenreRecommenderUser &other);
     GenreRecommenderUser& operator=(GenreRecommenderUser &&rval);
 private:
+    static std::string toLowerCase(const std::string &str);
 };
 
 #endif
